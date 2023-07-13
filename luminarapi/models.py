@@ -34,8 +34,8 @@ class Modules(models.Model):
     
     mod1_text = models.TextField()
     mod2_text = models.TextField()
-    mod3_text = models.TextField()
-    mod4_text = models.TextField()
+    mod3_text = models.TextField(blank=True,null=True)
+    mod4_text = models.TextField(blank=True,null=True)
     mod5_text = models.TextField(blank=True,null=True)
     mod6_text = models.TextField(blank=True,null=True)
     mod7_text = models.TextField(blank=True,null=True)
