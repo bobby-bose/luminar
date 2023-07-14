@@ -99,6 +99,9 @@ class VideoScreen(models.Model):
     course_name=models.CharField(max_length=300)
     description=models.CharField(max_length=500)
     date=models.DateField()
+    link=models.URLField(null=True,default="")
+    thumbnail=models.ImageField(upload_to="thumbnails",default="")
+    
     def __str__(self):
         return self.course_name
 class Test(models.Model):

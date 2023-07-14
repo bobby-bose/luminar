@@ -234,11 +234,41 @@ class OverDetailView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveMode
         
         return Response(response_data)
 
+
 class AttendanceView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveModelMixin):
     queryset=Attendance.objects.all()
     serializer_class=AttendanceSerializer
     # authentication_classes=[authentication.TokenAuthentication]
     # permission_classes=[permissions.IsAuthenticated]
+    def list(self, request, *args, **kwargs):
+        try:
+            courses = self.get_queryset()
+            total_results = courses.count()
+
+            if total_results == 0:
+                # If there are no courses, set the status as "error"
+                response_data = {
+                    "status": "error",
+                    "error_message": "No courses found.",
+                    "totalResults": total_results
+                }
+            else:
+                # If there are courses, set the status as "ok"
+                serialized_courses = self.serializer_class(courses, many=True)
+                response_data = {
+                    "status": "ok",
+                    "courses": serialized_courses.data,
+                    "totalResults": total_results
+                }
+        except Exception as e:
+            # If there is an exception, set the status as "error" and print the error message
+            response_data = {
+                "status": "error",
+                "error_message": str(e),
+                "totalResults": total_results
+            }
+        
+        return Response(response_data)
     http_method_names=["post","get"]
     def list(self, request, *args, **kwargs):
         try:
