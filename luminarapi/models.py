@@ -68,7 +68,7 @@ class Overview(models.Model):
 class Attendance(models.Model):
     batch_name = models.CharField(max_length=255)
     class_attended = models.IntegerField(default=0)
-    total_classes = models.IntegerField(default=100)
+    total_classes = models.IntegerField(default=0)
 
     def __str__(self):
         return self.batchname
