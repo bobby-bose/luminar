@@ -21,6 +21,9 @@ from django.conf.urls.static import static
 from rest_framework.routers import DefaultRouter
 from luminarapi import views as api_view
 
+
+
+
 from rest_framework.authtoken.views import ObtainAuthToken
 router=DefaultRouter()
 router.register("api/register",api_view.UsersView,basename="users"),
@@ -44,7 +47,15 @@ router.register("api/userprofile",api_view.UserProfileView,basename="userprofile
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/token/",ObtainAuthToken.as_view()),
-    path("", include(router.urls)),
+    path("api/sendpassword/",api_view.SendPassword),
+
+    path('api/password-reset/<int:id>/',api_view.PasswordReset),
+    path("api/verifyotp/<int:id>/", api_view.VerifyOtp),
+
+    
+    
+   
+    path("", include(router.urls))
 
    
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)+router._urls
