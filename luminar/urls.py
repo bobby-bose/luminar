@@ -51,6 +51,8 @@ urlpatterns = [
 
     path('api/password-reset/<int:id>/',api_view.PasswordReset),
     path("api/verifyotp/<int:id>/", api_view.VerifyOtp),
+     path("api/resetpassword/<int:id>/", api_view.Resetpassword),
+
 
     
     

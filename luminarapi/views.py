@@ -677,28 +677,67 @@ def PasswordReset(request, id):
         except Exception as e:
             print("Error sending email:", str(e))
             return HttpResponse("Failed to send OTP email")
+        request.session['otp'] = otp
         print("Registered Email:", user.email)
         print("Registered Username:", user.username)
         print("OTP:", otp)
+        
         return HttpResponse("POST called")
     
     return HttpResponse("Called")
 
 
-# def VerifyOtp(request,id):
-#     # Retrieve the email and entered OTP from the request
-#     email = request.POST.get("email")
-#     entered_otp = request.POST.get("otp")
 
-#     try:
-#         user = User.objects.get(email=email)
-#     except User.DoesNotExist:
-#         return HttpResponse("User not found")
 
-#     if user.otp == entered_otp:
-#         # OTP is correct
-#         # Perform necessary actions or logic here
-#         return HttpResponse("OTP is correct. Perform necessary actions.")
-#     else:
-#         # OTP is incorrect
-#         return HttpResponse("Invalid OTP. Please try again.")
+
+def VerifyOtp(request, id):
+    if request.method == 'POST':
+        
+        entered_otp = request.POST.get("user_otp")
+        stored_otp = request.session.get("otp")
+        
+
+        print("-----------------")
+        print( entered_otp, stored_otp)
+
+        if entered_otp == stored_otp:
+            try:
+                user = User.objects.get(id=id)
+                registered_email = user.email
+                registered_username = user.username
+                print(registered_email)
+                print(registered_username)
+           
+           
+                return HttpResponse('verified otp')
+            except User.DoesNotExist:
+                return HttpResponse("User not found")
+        else:
+            return HttpResponse("Invalid OTP. Please try again.")
+    else:
+        return HttpResponse("Invalid request method.")
+def Resetpassword(request, id):
+    if request.method == 'POST':
+        entered_password = request.POST.get("password")
+        confirm_password = request.POST.get("confirm_password")
+        print(entered_password)
+
+        if entered_password == confirm_password:
+            try:
+                user = User.objects.get(id=id)
+                user.set_password(entered_password)
+                user.save()
+
+                registered_email = user.email
+                registered_username = user.username
+                registered_email = user.email
+                registered_username = user.username
+                response = f"Passwords match. Registered Email: {registered_email}, Registered Username: {registered_username}"
+                return HttpResponse(response)
+            except User.DoesNotExist:
+                return HttpResponse("User not found")
+        else:
+            return HttpResponse("Passwords do not match. Please try again.")
+
+    else:
+        return HttpResponse("Invalid request method.")
