@@ -64,6 +64,42 @@ class CoursesListView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateMod
             }
         
         return Response(response_data)
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            response_data = {
+                "status": "created",
+                "data": serializer.data
+            }
+            return Response(response_data, status=status.HTTP_201_CREATED, headers=headers)
+        except Exception as e:
+            response_data = {
+                "status": "error",
+                "error_message": str(e)
+            }
+            return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, *args, **kwargs):
+        try:
+            partial = kwargs.pop('partial', False)
+            instance = self.get_object()
+            serializer = self.get_serializer(instance, data=request.data, partial=partial)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+            response_data = {
+                "status": "updated",
+                "data": serializer.data
+            }
+            return Response(response_data)
+        except Exception as e:
+            response_data = {
+                "status": "error",
+                "error_message": str(e)
+            }
+            return Response(response_data)
 
 
     
@@ -139,6 +175,42 @@ class DetailsListAPIView(GenericViewSet,ListModelMixin,RetrieveModelMixin,Create
             }
         
         return Response(response_data)
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            response_data = {
+                "status": "created",
+                "data": serializer.data
+            }
+            return Response(response_data)
+        except Exception as e:
+            response_data = {
+                "status": "error",
+                "error_message": str(e)
+            }
+            return Response(response_data)
+
+    def update(self, request, *args, **kwargs):
+        try:
+            partial = kwargs.pop('partial', False)
+            instance = self.get_object()
+            serializer = self.get_serializer(instance, data=request.data, partial=partial)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+            response_data = {
+                "status": "updated",
+                "data": serializer.data
+            }
+            return Response(response_data)
+        except Exception as e:
+            response_data = {
+                "status": "error",
+                "error_message": str(e)
+            }
+            return Response(response_data)
 
 class ModulesAPIView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateModelMixin,UpdateModelMixin):
     queryset = Modules.objects.all()
@@ -211,6 +283,42 @@ class BatchListView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateModel
             }
         
         return Response(response_data)
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            response_data = {
+                "status": "created",
+                "data": serializer.data
+            }
+            return Response(response_data)
+        except Exception as e:
+            response_data = {
+                "status": "error",
+                "error_message": str(e)
+            }
+            return Response(response_data)
+
+    def update(self, request, *args, **kwargs):
+        try:
+            partial = kwargs.pop('partial', False)
+            instance = self.get_object()
+            serializer = self.get_serializer(instance, data=request.data, partial=partial)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+            response_data = {
+                "status": "updated",
+                "data": serializer.data
+            }
+            return Response(response_data)
+        except Exception as e:
+            response_data = {
+                "status": "error",
+                "error_message": str(e)
+            }
+            return Response(response_data)
 
 class OverDetailView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveModelMixin):
     queryset=Overview.objects.all()
@@ -247,6 +355,24 @@ class OverDetailView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveMode
             }
         
         return Response(response_data)
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            response_data = {
+                "status": "created",
+                "data": serializer.data
+            }
+            return Response(response_data)
+        except Exception as e:
+            response_data = {
+                "status": "error",
+                "error_message": str(e)
+            }
+            return Response(response_data)
+
 
 
 class AttendanceView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveModelMixin):
@@ -254,6 +380,7 @@ class AttendanceView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveMode
     serializer_class=AttendanceSerializer
     # authentication_classes=[authentication.TokenAuthentication]
     # permission_classes=[permissions.IsAuthenticated]
+    http_method_names=["get","post"]
     def list(self, request, *args, **kwargs):
         try:
             courses = self.get_queryset()
@@ -313,6 +440,23 @@ class AttendanceView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveMode
             }
         
         return Response(response_data)
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            response_data = {
+                "status": "created",
+                "data": serializer.data
+            }
+            return Response(response_data)
+        except Exception as e:
+            response_data = {
+                "status": "error",
+                "error_message": str(e)
+            }
+            return Response(response_data)
 
 class AssignmentView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveModelMixin):
     queryset=Assignment.objects.all()
@@ -457,6 +601,23 @@ class VideoScreenView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveMod
             }
         
         return Response(response_data)
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            response_data = {
+                "status": "created",
+                "data": serializer.data
+            }
+            return Response(response_data)
+        except Exception as e:
+            response_data = {
+                "status": "error",
+                "error_message": str(e)
+            }
+            return Response(response_data)
 
 class TestView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveModelMixin):
     queryset=Test.objects.all()
@@ -493,6 +654,23 @@ class TestView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveModelMixin
             }
         
         return Response(response_data)
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            response_data = {
+                "status": "created",
+                "data": serializer.data
+            }
+            return Response(response_data)
+        except Exception as e:
+            response_data = {
+                "status": "error",
+                "error_message": str(e)
+            }
+            return Response(response_data)
 
 class JobPortalView(GenericViewSet,CreateModelMixin,ListModelMixin):
     queryset=JobPortal.objects.all()
@@ -529,6 +707,23 @@ class JobPortalView(GenericViewSet,CreateModelMixin,ListModelMixin):
             }
         
         return Response(response_data)
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            response_data = {
+                "status": "created",
+                "data": serializer.data
+            }
+            return Response(response_data)
+        except Exception as e:
+            response_data = {
+                "status": "error",
+                "error_message": str(e)
+            }
+            return Response(response_data)
 
 class UserProfileView(GenericViewSet, CreateModelMixin, ListModelMixin,UpdateModelMixin):
     queryset = Userprofile.objects.all()
@@ -565,6 +760,43 @@ class UserProfileView(GenericViewSet, CreateModelMixin, ListModelMixin,UpdateMod
             }
         
         return Response(response_data)
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            response_data = {
+                "status": "created",
+                "data": serializer.data
+            }
+            return Response(response_data)
+        except Exception as e:
+            response_data = {
+                "status": "error",
+                "error_message": str(e)
+            }
+            return Response(response_data)
+
+    def update(self, request, *args, **kwargs):
+        try:
+            partial = kwargs.pop('partial', False)
+            instance = self.get_object()
+            serializer = self.get_serializer(instance, data=request.data, partial=partial)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+            response_data = {
+                "status": "updated",
+                "data": serializer.data
+            }
+            return Response(response_data)
+        except Exception as e:
+            response_data = {
+                "status": "error",
+                "error_message": str(e)
+            }
+            return Response(response_data)
+
 
 # from django.views.decorators.csrf import csrf_exempt
 
