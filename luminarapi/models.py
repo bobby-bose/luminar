@@ -1,8 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-
-
-
 class Courses(models.Model):
     name=models.CharField(max_length=300)
     image=models.ImageField(upload_to="images",null=True,blank=True)
@@ -23,15 +20,11 @@ class Details(models.Model):
     offline_fees = models.DecimalField(max_digits=10, decimal_places=2)
     online_fees = models.DecimalField(max_digits=10, decimal_places=2)
     thumbnail = models.ImageField(upload_to='thumbnails')
-
-
     def __str__(self):
         return self.title
 class Modules(models.Model):
     title = models.CharField(max_length=255)
     thumbnail = models.ImageField(upload_to='thumbnails')
-    
-    
     mod1_text = models.TextField()
     mod2_text = models.TextField()
     mod3_text = models.TextField(blank=True,null=True)
@@ -42,10 +35,6 @@ class Modules(models.Model):
     mod8_text = models.TextField(blank=True,null=True)
     mod9_text = models.TextField(blank=True,null=True)
     mod10_text = models.TextField(blank=True,null=True)
-   
-   
-    
-
     def __str__(self):
         return self.title
 class Batch(models.Model):
@@ -60,11 +49,8 @@ class Overview(models.Model):
     batch_code = models.CharField(max_length=50)
     course_name = models.CharField(max_length=255)
     subjects = models.CharField(max_length=200)
-
     def __str__(self):
         return self.name
-
-
 class Attendance(models.Model):
     batch_name = models.CharField(max_length=255)
     class_attended = models.IntegerField(default=0)
