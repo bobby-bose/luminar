@@ -41,14 +41,14 @@ class CoursesListView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateMod
             total_results = courses.count()
 
             if total_results == 0:
-                # If there are no courses, set the status as "error"
+               
                 response_data = {
                     "status": "error",
                     "error_message": "No courses found.",
                     "totalResults": total_results
                 }
             else:
-                # If there are courses, set the status as "ok"
+               
                 serialized_courses = self.serializer_class(courses, many=True)
                 response_data = {
                     "status": "ok",
@@ -71,7 +71,7 @@ class CoursesListView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateMod
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
             response_data = {
-                "status": "created",
+                "status": "ok",
                 "data": serializer.data
             }
             return Response(response_data)
@@ -100,6 +100,20 @@ class CoursesListView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateMod
                 "error_message": str(e)
             }
             return Response(response_data)
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            serialized_course = self.serializer_class(instance)
+            response_data = {
+                "status": "ok",
+                "course": serialized_course.data
+            }
+        except Exception as e:
+            response_data = {
+                "status": "error",
+                "error_message": str(e)
+            }
+        return Response(response_data)
 
 
     
@@ -127,7 +141,7 @@ class DemoClassListView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateM
                 serialized_demo_classes = self.serializer_class(democlass, many=True)
                 response_data = {
                     "status": "ok",
-                    "democlass": serialized_demo_classes.data,
+                    "data": serialized_demo_classes.data,
                     "totalResults": total_results
                 }
         except Exception as e:
@@ -198,7 +212,7 @@ class DetailsListAPIView(GenericViewSet,ListModelMixin,RetrieveModelMixin,Create
                 serialized_details = self.serializer_class(details, many=True)
                 response_data = {
                     "status": "ok",
-                    "details": serialized_details.data,
+                    "data": serialized_details.data,
                     "totalResults": total_results
                 }
         except Exception as e:
@@ -261,8 +275,8 @@ class ModulesAPIView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateMode
             if total_results == 0:
                
                 response_data = {
-                    "status": "error",
-                    "error_message": "No modules found.",
+                    "status": "ok",
+                    "error_message": "[]",
                     "totalResults": total_results
                 }
             else:
@@ -270,7 +284,7 @@ class ModulesAPIView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateMode
                 serialized_modules = self.serializer_class(modules, many=True)
                 response_data = {
                     "status": "ok",
-                    "modules": serialized_modules.data,
+                    "data": serialized_modules.data,
                     "totalResults": total_results
                 }
         except Exception as e:
@@ -289,7 +303,7 @@ class ModulesAPIView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateMode
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
             response_data = {
-                "status": "created",
+                "status": "ok",
                 "data": serializer.data
             }
             return Response(response_data)
@@ -307,7 +321,7 @@ class ModulesAPIView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateMode
             serializer.is_valid(raise_exception=True)
             self.perform_update(serializer)
             response_data = {
-                "status": "updated",
+                "status": "ok",
                 "data": serializer.data
             }
             return Response(response_data)
@@ -342,7 +356,7 @@ class BatchListView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateModel
                 serialized_batches = self.serializer_class(batches, many=True)
                 response_data = {
                     "status": "ok",
-                    "batches": serialized_batches.data,
+                    "data": serialized_batches.data,
                     "totalResults": total_results
                 }
         except Exception as e:
@@ -361,7 +375,7 @@ class BatchListView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateModel
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
             response_data = {
-                "status": "created",
+                "status": "ok",
                 "data": serializer.data
             }
             return Response(response_data)
@@ -380,7 +394,7 @@ class BatchListView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateModel
             serializer.is_valid(raise_exception=True)
             self.perform_update(serializer)
             response_data = {
-                "status": "updated",
+                "status": "ok",
                 "data": serializer.data
             }
             return Response(response_data)
@@ -395,7 +409,7 @@ class OverDetailView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveMode
     serializer_class=OverviewSerializer
     # authentication_classes=[authentication.TokenAuthentication]
     # permission_classes=[permissions.IsAuthenticated]
-    http_method_names=["post","get"]
+    http_method_names=["post","get","put"]
     def list(self, request, *args, **kwargs):
         try:
             overviews = self.get_queryset()
@@ -413,7 +427,7 @@ class OverDetailView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveMode
                 serialized_overviews = self.serializer_class(overviews, many=True)
                 response_data = {
                     "status": "ok",
-                    "overviews": serialized_overviews.data,
+                    "data": serialized_overviews.data,
                     "totalResults": total_results
                 }
         except Exception as e:
@@ -432,7 +446,7 @@ class OverDetailView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveMode
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
             response_data = {
-                "status": "created",
+                "status": "ok",
                 "data": serializer.data
             }
             return Response(response_data)
@@ -467,7 +481,7 @@ class AttendanceView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveMode
                 serialized_attendance = self.serializer_class(attendance_records, many=True)
                 response_data = {
                     "status": "ok",
-                    "attendance_records": serialized_attendance.data,
+                    "data": serialized_attendance.data,
                     "totalResults": total_results
                 }
         except Exception as e:
@@ -486,7 +500,7 @@ class AttendanceView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveMode
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
             response_data = {
-                "status": "created",
+                "status": "ok",
                 "data": serializer.data
             }
             return Response(response_data)
@@ -539,7 +553,7 @@ class AssignmentView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveMode
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
             response_data = {
-                "status": "created",
+                "status": "ok",
                 "data": serializer.data
             }
             return Response(response_data)
@@ -572,7 +586,7 @@ class AnnouncementView(GenericViewSet,CreateModelMixin,ListModelMixin):
                 serialized_announcements = self.serializer_class(announcements, many=True)
                 response_data = {
                     "status": "ok",
-                    "announcements": serialized_announcements.data,
+                    "data": serialized_announcements.data,
                     "totalResults": total_results
                 }
         except Exception as e:
@@ -592,7 +606,7 @@ class AnnouncementView(GenericViewSet,CreateModelMixin,ListModelMixin):
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
             response_data = {
-                "status": "created",
+                "status": "ok",
                 "data": serializer.data
             }
             return Response(response_data)
@@ -625,7 +639,7 @@ class LiveClassView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveModel
                 serialized_live_classes = self.serializer_class(live_classes, many=True)
                 response_data = {
                     "status": "ok",
-                    "live_classes": serialized_live_classes.data,
+                    "data": serialized_live_classes.data,
                     "totalResults": total_results
                 }
         except Exception as e:
@@ -644,7 +658,7 @@ class LiveClassView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveModel
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
             response_data = {
-                "status": "created",
+                "status": "ok",
                 "data": serializer.data
             }
             return Response(response_data)
@@ -695,7 +709,7 @@ class VideoScreenView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveMod
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
             response_data = {
-                "status": "created",
+                "status": "ok",
                 "data": serializer.data
             }
             return Response(response_data)
@@ -728,7 +742,7 @@ class TestView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveModelMixin
                 serialized_tests = self.serializer_class(tests, many=True)
                 response_data = {
                     "status": "ok",
-                    "tests": serialized_tests.data,
+                    "data": serialized_tests.data,
                     "totalResults": total_results
                 }
         except Exception as e:
@@ -747,7 +761,7 @@ class TestView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveModelMixin
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
             response_data = {
-                "status": "created",
+                "status": "ok",
                 "data": serializer.data
             }
             return Response(response_data)
@@ -780,7 +794,7 @@ class JobPortalView(GenericViewSet,CreateModelMixin,ListModelMixin):
                 serialized_job_portals = self.serializer_class(job_portals, many=True)
                 response_data = {
                     "status": "ok",
-                    "job_portals": serialized_job_portals.data,
+                    "data": serialized_job_portals.data,
                     "totalResults": total_results
                 }
         except Exception as e:
@@ -800,7 +814,7 @@ class JobPortalView(GenericViewSet,CreateModelMixin,ListModelMixin):
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
             response_data = {
-                "status": "created",
+                "status": "ok",
                 "data": serializer.data
             }
             return Response(response_data)
@@ -830,7 +844,7 @@ class UserProfileView(GenericViewSet, CreateModelMixin, ListModelMixin,UpdateMod
                 serialized_user_profiles = self.serializer_class(user_profiles, many=True)
                 response_data = {
                     "status": "ok",
-                    "user_profiles": serialized_user_profiles.data,
+                    "data": serialized_user_profiles.data,
                     "totalResults": total_results
                 }
         except Exception as e:
@@ -848,7 +862,7 @@ class UserProfileView(GenericViewSet, CreateModelMixin, ListModelMixin,UpdateMod
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
             response_data = {
-                "status": "created",
+                "status": "ok",
                 "data": serializer.data
             }
             return Response(response_data)
@@ -867,7 +881,7 @@ class UserProfileView(GenericViewSet, CreateModelMixin, ListModelMixin,UpdateMod
             serializer.is_valid(raise_exception=True)
             self.perform_update(serializer)
             response_data = {
-                "status": "updated",
+                "status": "ok",
                 "data": serializer.data
             }
             return Response(response_data)

@@ -7,8 +7,7 @@ class Courses(models.Model):
         return self.name
 class DemoClass(models.Model):
     name = models.CharField(max_length=100)
-    description = models.TextField()
-    url_link = models.URLField()
+    
     thumbnail = models.ImageField(upload_to='thumbnails')
 
     def __str__(self):
@@ -25,18 +24,30 @@ class Details(models.Model):
 class Modules(models.Model):
     title = models.CharField(max_length=255)
     thumbnail = models.ImageField(upload_to='thumbnails')
+    mod_no1=models.CharField(max_length=100,default=False)
     mod1_text = models.TextField()
+    mod_no2=models.CharField(max_length=100,default=False)
     mod2_text = models.TextField()
+    mod_no3=models.CharField(max_length=100,default=False)
     mod3_text = models.TextField(blank=True,null=True)
+    mod_no4=models.CharField(max_length=100,default=False)
     mod4_text = models.TextField(blank=True,null=True)
+    mod_no5=models.CharField(max_length=100,default=False)
     mod5_text = models.TextField(blank=True,null=True)
+    mod_no6=models.CharField(max_length=100,default=False)
     mod6_text = models.TextField(blank=True,null=True)
+    mod_no7=models.CharField(max_length=100,default=False)
     mod7_text = models.TextField(blank=True,null=True)
+    mod_no8=models.CharField(max_length=100,default=False)
     mod8_text = models.TextField(blank=True,null=True)
+    mod_no9=models.CharField(max_length=100,default=False)
     mod9_text = models.TextField(blank=True,null=True)
+    mod_no10=models.CharField(max_length=100,default=False)
     mod10_text = models.TextField(blank=True,null=True)
     def __str__(self):
         return self.title
+
+
 class Batch(models.Model):
     name=models.CharField(max_length=200)
     description=models.CharField(max_length=200)
@@ -51,6 +62,7 @@ class Overview(models.Model):
     subjects = models.CharField(max_length=200)
     def __str__(self):
         return self.name
+
 class Attendance(models.Model):
     batch_name = models.CharField(max_length=255)
     class_attended = models.IntegerField(default=0)

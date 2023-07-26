@@ -18,7 +18,7 @@ class DemoSerializers(serializers.ModelSerializer):
     id=serializers.CharField(read_only=True)
     class Meta:
         model=DemoClass
-        fields=['id','name','description','url_link','thumbnail']
+        fields=['id','name','thumbnail']
 class DetailsSerializer(serializers.ModelSerializer):
     id=serializers.CharField(read_only=True)
     class Meta:
@@ -27,7 +27,7 @@ class DetailsSerializer(serializers.ModelSerializer):
 class ModulesSerializer(serializers.ModelSerializer):
     id=serializers.CharField(read_only=True)
     class Meta:
-        model =Modules 
+        model =Modules
         fields = '__all__'
 class BatchSerializer(serializers.ModelSerializer):
      id=serializers.CharField(read_only=True)
