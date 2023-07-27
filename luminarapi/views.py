@@ -14,6 +14,7 @@ from luminarapi.serializers import UserSerializer,CourseSerializers,DemoSerializ
 from luminarapi.models import Courses,DemoClass,Details,Modules,Batch,Overview,Attendance,Assignment,Announcement,LiveClass,VideoScreen
 from luminarapi.serializers import TestSerializer,JobPortalSerializer,UserProfileSerializer
 from luminarapi.models import Test,JobPortal,Userprofile
+<<<<<<< HEAD
 from twilio.rest import Client
 from rest_framework.views import APIView
 from django.core.mail import send_mail
@@ -22,6 +23,11 @@ from django.utils.html import strip_tags
 
 
 
+=======
+
+def test():
+    pass
+>>>>>>> 9b032624ebbc1cb897feae06dd9936a2c25a05a6
 
 
 class UsersView(ModelViewSet):
