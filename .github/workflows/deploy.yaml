@@ -1,4 +1,4 @@
-name: Deploy to AWS EC2
+name: Deploy to EC2
 
 on:
   push:
@@ -13,7 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Python
+      - name: Set up Python and Node.js
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
@@ -25,6 +25,5 @@ jobs:
 
       - name: Deploy to EC2
         run: |
-          ssh ec2-user@13.234.67.64 'mkdir -p ~/luminar'
-          rsync -avz --exclude '.git*' --exclude 'venv/' --exclude 'node_modules/' ./ ec2-user@13.234.67.64:~/luminar/
+          scp -r ./* ec2-user@13.234.67.64:~/luminar
           ssh ec2-user@13.234.67.64 'cd ~/luminar && source venv/bin/activate && python manage.py migrate && python manage.py collectstatic && sudo systemctl restart gunicorn'
