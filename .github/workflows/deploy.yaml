@@ -17,12 +17,14 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
+          node-version: '16' # Explicitly set Node.js version to 16
 
       - name: Install dependencies
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
-
+      
       - name: Deploy to EC2
         run: |
-          ssh -i luminar_app_final.pem ubuntu@13.234.67.64 'cd ~/luminar/ && source venv/bin/activate && python manage.py migrate && python manage.py collectstatic && sudo systemctl restart gunicorn'
+          scp -i luminar_app_final.pem -r ./* 13.234.67.64:~/luminar
+          ssh -i luminar_app_final.pem ubuntu@13.234.67.64 'cd ~/luminar && source venv/bin/activate && python manage.py migrate && python manage.py collectstatic && sudo systemctl restart gunicorn'
