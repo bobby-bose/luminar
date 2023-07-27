@@ -10,6 +10,11 @@ from luminarapi.serializers import UserSerializer,CourseSerializers,DemoSerializ
 from luminarapi.models import Courses,DemoClass,Details,Modules,Batch,Overview,Attendance,Assignment,Announcement,LiveClass,VideoScreen
 from luminarapi.serializers import TestSerializer,JobPortalSerializer,UserProfileSerializer
 from luminarapi.models import Test,JobPortal,Userprofile
+
+def test():
+    pass
+
+
 class UsersView(ModelViewSet):
     serializer_class=UserSerializer
     queryset=get_user_model().objects.all()
