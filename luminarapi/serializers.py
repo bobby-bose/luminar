@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from luminarapi.models import Courses,DemoClass,Details,Modules,Batch,Overview,Attendance,Assignment,Announcement,LiveClass,VideoScreen,Test,JobPortal,Userprofile
+from luminarapi.models import Courses,DemoClass,Details,Modules,Batch,Overview,Attendance,Assignment,Announcement,LiveClass,VideoScreen,Test,JobPortal,Userprofile,DemoVideoScreen
 
 class UserSerializer(serializers.ModelSerializer):
     id=serializers.CharField(read_only=True)
@@ -36,9 +36,14 @@ class BatchSerializer(serializers.ModelSerializer):
          fields="__all__"
 class OverviewSerializer(serializers.ModelSerializer):
     id=serializers.CharField(read_only=True)
+    subjects = serializers.SerializerMethodField()
     class Meta:
          model=Overview
          fields="__all__"
+    def get_subjects(self, obj):
+        # Assuming subjects are stored as a comma-separated string in the database
+        subjects_string = obj.subjects
+        return [subject.strip() for subject in subjects_string.split(',')]
 class AttendanceSerializer(serializers.ModelSerializer):
     id=serializers.CharField(read_only=True)
     class Meta:
@@ -78,6 +83,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
     id=serializers.CharField(read_only=True)
     class Meta:
         model=Userprofile
+        fields="__all__"
+class DemoVideoScreenSerializer(serializers.ModelSerializer):
+    id=serializers.CharField(read_only=True)
+    class Meta:
+        model=DemoVideoScreen
         fields="__all__"
 
 

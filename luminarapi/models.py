@@ -31,7 +31,6 @@ class Modules(models.Model):
     duration=models.CharField(max_length=300,default="6 months")
     offline_fees = models.DecimalField(max_digits=10, decimal_places=2,default=False)
     online_fees = models.DecimalField(max_digits=10, decimal_places=2,default=False)
-   
     mod_no1=models.CharField(max_length=100,default="")
     mod1_text = models.TextField()
     mod_no2=models.CharField(max_length=100,default="")
@@ -134,6 +133,16 @@ class Userprofile(models.Model):
     gender=models.CharField(max_length=100)
     def __str__(self) :
         return self.user_name
+
+class DemoVideoScreen(models.Model):
+    thumbnail = models.ImageField(upload_to='thumbnails/')  # Assumes you have the Pillow library installed for image handling.
+    videolink = models.URLField(max_length=200)
+    description = models.TextField()
+    uploaded_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"DemoVideoScreen {self.id}"
+
     
 
 

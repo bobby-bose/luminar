@@ -29,6 +29,7 @@ router=DefaultRouter()
 router.register("api/register",api_view.UsersView,basename="users"),
 router.register("api/courses",api_view.CoursesListView,basename="courses"),
 router.register("api/democlass",api_view.DemoClassListView,basename="democlass"),
+# router.register("api/demovideo",api_view.DemoVideoScreenView,basename="demovideo"),
 router.register("api/details",api_view.DetailsListAPIView,basename="details"),
 router.register("api/modules",api_view.ModulesAPIView,basename="modules"),
 router.register("api/batches",api_view.BatchListView,basename="batches"),
