@@ -14,7 +14,7 @@ from luminarapi.serializers import UserSerializer,CourseSerializers,DemoSerializ
 from luminarapi.models import Courses,DemoClass,Details,Modules,Batch,Overview,Attendance,Assignment,Announcement,LiveClass,VideoScreen
 from luminarapi.serializers import TestSerializer,JobPortalSerializer,UserProfileSerializer
 from luminarapi.models import Test,JobPortal,Userprofile
-<<<<<<< HEAD
+
 from twilio.rest import Client
 from rest_framework.views import APIView
 from django.core.mail import send_mail
