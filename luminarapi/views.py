@@ -21,6 +21,11 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
 
+<<<<<<< HEAD
+=======
+def test(request):
+    pass
+>>>>>>> 3a10acb14c960c1968e9c515019efe1b24cb8fc6
 
 
 
