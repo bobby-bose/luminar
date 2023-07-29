@@ -12,9 +12,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from luminarapi.serializers import UserSerializer,CourseSerializers,DemoSerializers,DetailsSerializer,ModulesSerializer,BatchSerializer,OverviewSerializer,AttendanceSerializer,AssignmentSerializer,AnnouncementSerializer,LiveClassSerializer,VideoScreenSerializer
 from luminarapi.models import Courses,DemoClass,Details,Modules,Batch,Overview,Attendance,Assignment,Announcement,LiveClass,VideoScreen
-from luminarapi.serializers import TestSerializer,JobPortalSerializer,UserProfileSerializer
-from luminarapi.models import Test,JobPortal,Userprofile
-<<<<<<< HEAD
+from luminarapi.serializers import TestSerializer,JobPortalSerializer,UserProfileSerializer,DemoVideoScreenSerializer
+from luminarapi.models import Test,JobPortal,Userprofile,DemoVideoScreen
 from twilio.rest import Client
 from rest_framework.views import APIView
 from django.core.mail import send_mail
@@ -23,11 +22,6 @@ from django.utils.html import strip_tags
 
 
 
-=======
-
-def test():
-    pass
->>>>>>> 9b032624ebbc1cb897feae06dd9936a2c25a05a6
 
 
 class UsersView(ModelViewSet):
@@ -454,6 +448,94 @@ class BatchListView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateModel
                 "error_message": str(e)
             }
             return Response(response_data)
+# class DemoVideoScreenView(GenericViewSet, ListModelMixin, RetrieveModelMixin, CreateModelMixin, UpdateModelMixin):
+#     queryset = DemoVideoScreen.objects.all()
+#     serializer_class = DemoVideoScreenSerializer
+
+#     def list(self, request, *args, **kwargs):
+#         try:
+#             demovideoscreens = self.get_queryset()
+#             total_results = demovideoscreens.count()
+
+#             if total_results == 0:
+#                 response_data = {
+#                     "status": "ok",
+#                     "message": "[]",
+#                     "totalResults": total_results
+#                 }
+#             else:
+#                 serialized_demovideoscreens = self.serializer_class(demovideoscreens, many=True)
+#                 response_data = {
+#                     "status": "ok",
+#                     "data": serialized_demovideoscreens.data,
+#                     "totalResults": total_results
+#                 }
+#         except Exception as e:
+#             response_data = {
+#                 "status": "error",
+#                 "error_message": str(e),
+#                 "totalResults": total_results
+#             }
+        
+#         return Response(response_data)
+
+#     def create(self, request, *args, **kwargs):
+#         try:
+#             serializer = self.get_serializer(data=request.data)
+#             serializer.is_valid(raise_exception=True)
+#             self.perform_create(serializer)
+#             headers = self.get_success_headers(serializer.data)
+#             response_data = {
+#                 "status": "ok",
+#                 "data": serializer.data
+#             }
+#             return Response(response_data)
+#         except Exception as e:
+#             response_data = {
+#                 "status": "error",
+#                 "error_message": str(e)
+#             }
+#             return Response(response_data)
+
+#     def update(self, request, *args, **kwargs):
+#         try:
+#             partial = kwargs.pop('partial', False)
+#             instance = self.get_object()
+#             serializer = self.get_serializer(instance, data=request.data, partial=partial)
+#             serializer.is_valid(raise_exception=True)
+#             self.perform_update(serializer)
+#             response_data = {
+#                 "status": "ok",
+#                 "data": serializer.data
+#             }
+#             return Response(response_data)
+#         except Exception as e:
+#             response_data = {
+#                 "status": "error",
+#                 "error_message": str(e)
+#             }
+#             return Response(response_data)
+
+#     def retrieve(self, request, *args, **kwargs):
+#         try:
+#             instance = self.get_object()
+#             serialized_instance = self.serializer_class(instance)
+
+#             # Construct the response data in the desired format
+#             response_data = {
+#                 "status": "ok",
+#                 "data": serialized_instance.data
+#             }
+
+#         except Exception as e:
+#             response_data = {
+#                 "status": "error",
+#                 "error_message": str(e)
+#             }
+
+#         return Response(response_data)
+
+
 class OverDetailView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveModelMixin):
     queryset=Overview.objects.all()
     serializer_class=OverviewSerializer
@@ -506,46 +588,26 @@ class OverDetailView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveMode
                 "error_message": str(e)
             }
             return Response(response_data)
-class AttendanceView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveModelMixin):
-    queryset=Attendance.objects.all()
-    serializer_class=AttendanceSerializer
-    # authentication_classes=[authentication.TokenAuthentication]
-    # permission_classes=[permissions.IsAuthenticated]
-    http_method_names=["get","post"]
+class AttendanceView(GenericViewSet, CreateModelMixin, RetrieveModelMixin):
+    queryset = Attendance.objects.all()
+    serializer_class = AttendanceSerializer
+    http_method_names = ["get", "post"]
     
-    
-    def list(self, request, *args, **kwargs):
-        try:
-            attendance_records = self.get_queryset()
-            total_results = attendance_records.count()
-
-            if total_results == 0:
-                
-                response_data = {
-                    "status": "error",
-                    "error_message": "No attendance records found.",
-                    "totalResults": total_results
-                }
-            else:
-                
-                serialized_attendance = self.serializer_class(attendance_records, many=True)
-                response_data = {
-                    "status": "ok",
-                    "data": serialized_attendance.data,
-                    "totalResults": total_results
-                }
-        except Exception as e:
-            
-            response_data = {
-                "status": "error",
-                "error_message": str(e),
-                "totalResults": total_results
-            }
-        
-        return Response(response_data)
     def create(self, request, *args, **kwargs):
         try:
-            serializer = self.get_serializer(data=request.data)
+            user_id = request.data.get('user')  # Assuming you have a field 'user' to identify the user
+            date = request.data.get('date')     # Assuming you have a field 'date' to identify the date
+
+            # Check if an attendance record already exists for the given user and date
+            attendance = self.queryset.filter(user=user_id, date=date).first()
+
+            if attendance:
+                # If attendance record exists, update the existing record
+                serializer = self.get_serializer(attendance, data=request.data)
+            else:
+                # If attendance record does not exist, create a new record
+                serializer = self.get_serializer(data=request.data)
+
             serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
