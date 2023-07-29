@@ -14,6 +14,7 @@ from luminarapi.serializers import UserSerializer,CourseSerializers,DemoSerializ
 from luminarapi.models import Courses,DemoClass,Details,Modules,Batch,Overview,Attendance,Assignment,Announcement,LiveClass,VideoScreen
 from luminarapi.serializers import TestSerializer,JobPortalSerializer,UserProfileSerializer
 from luminarapi.models import Test,JobPortal,Userprofile
+<<<<<<< HEAD
 from twilio.rest import Client
 from rest_framework.views import APIView
 from django.core.mail import send_mail
@@ -23,6 +24,7 @@ from django.utils.html import strip_tags
 
 def test(request):
     pass
+
 
 
 class UsersView(ModelViewSet):
@@ -274,28 +276,68 @@ class ModulesAPIView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateMode
             total_results = modules.count()
 
             if total_results == 0:
-               
                 response_data = {
-                    "status": "ok",
-                    "error_message": "[]",
+                    "status": "error",
+                    "error_message": "No modules found.",
                     "totalResults": total_results
                 }
             else:
-               
                 serialized_modules = self.serializer_class(modules, many=True)
+                modules_data = []
+                for module in serialized_modules.data:
+                    module_data = {
+                        "id": module["id"],
+                        "title": module["title"],
+                        "thumbnail": module["thumbnail"],
+                        "modules": {}
+                    }
+                    for key, value in module.items():
+                        if key.startswith("mod") and value:
+                            module_data["modules"][key] = value
+
+                    modules_data.append(module_data)
+
                 response_data = {
                     "status": "ok",
-                    "data": serialized_modules.data,
+                    "modules": modules_data,
                     "totalResults": total_results
                 }
+
         except Exception as e:
-           
             response_data = {
                 "status": "error",
                 "error_message": str(e),
                 "totalResults": total_results
             }
-        
+
+        return Response(response_data)
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            serialized_course = self.serializer_class(instance)
+
+            # Construct the response data in the desired format
+            response_data = {
+                "status": "ok",
+                "course": {
+                    "id": serialized_course.data["id"],
+                    "title": serialized_course.data["title"],
+                    "thumbnail": serialized_course.data["thumbnail"],
+                    "modules": {}
+                }
+            }
+
+            # Assuming the serialized_course.data contains a key for each module, like "mod1", "mod2", etc.
+            for key, value in serialized_course.data.items():
+                if key.startswith("mod") and value:
+                    response_data["course"]["modules"][key] = value
+
+        except Exception as e:
+            response_data = {
+                "status": "error",
+                "error_message": str(e)
+            }
+
         return Response(response_data)
     def create(self, request, *args, **kwargs):
         try:
@@ -332,6 +374,10 @@ class ModulesAPIView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateMode
                 "error_message": str(e)
             }
             return Response(response_data)
+    
+        
+
+        
 
 
 class BatchListView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateModelMixin,UpdateModelMixin):
