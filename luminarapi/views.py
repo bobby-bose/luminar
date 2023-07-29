@@ -23,11 +23,7 @@ from django.utils.html import strip_tags
 
 
 
-=======
 
-def test():
-    pass
->>>>>>> 9b032624ebbc1cb897feae06dd9936a2c25a05a6
 
 
 class UsersView(ModelViewSet):
