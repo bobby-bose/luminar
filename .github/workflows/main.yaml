@@ -1,0 +1,23 @@
+name: Another CI CD Pipeline
+
+on:
+  push:
+    branches:
+      - master
+
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - Execute a script over EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd /home/ubuntu/luminar
+            sh deployments.sh
