@@ -20,16 +20,27 @@ from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework.routers import DefaultRouter
 from luminarapi import views as api_view
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
-
-
+# Define the schema view for Swagger
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Snippets API",
+        default_version='v1',
+        description="Test description",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="contact@snippets.local"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+)
 
 from rest_framework.authtoken.views import ObtainAuthToken
 router=DefaultRouter()
 router.register("api/register",api_view.UsersView,basename="users"),
 router.register("api/courses",api_view.CoursesListView,basename="courses"),
 router.register("api/democlass",api_view.DemoClassListView,basename="democlass"),
-# router.register("api/demovideo",api_view.DemoVideoScreenView,basename="demovideo"),
 router.register("api/details",api_view.DetailsListAPIView,basename="details"),
 router.register("api/modules",api_view.ModulesAPIView,basename="modules"),
 router.register("api/batches",api_view.BatchListView,basename="batches"),
@@ -53,6 +64,9 @@ urlpatterns = [
     path('api/password-reset/<int:id>/',api_view.PasswordReset),
     path("api/verifyotp/<int:id>/", api_view.VerifyOtp),
      path("api/resetpassword/<int:id>/", api_view.Resetpassword),
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+
+     
 
 
     
