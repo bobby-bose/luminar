@@ -502,15 +502,17 @@ class AttendanceView(GenericViewSet,CreateModelMixin,RetrieveModelMixin,UpdateMo
     # authentication_classes=[authentication.TokenAuthentication]
     # permission_classes=[permissions.IsAuthenticated]
     http_method_names=["get","post"]
-    def update(self, request, *args, **kwargs):
+    
+    
+
+    def create(self, request, *args, **kwargs):
         try:
-            partial = kwargs.pop('partial', False)
-            instance = self.get_object()
-            serializer = self.get_serializer(instance, data=request.data, partial=partial)
+            serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
-            self.perform_update(serializer)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
             response_data = {
-                "status": "ok",
+                "status": "created",
                 "data": serializer.data
             }
             return Response(response_data)
@@ -520,18 +522,33 @@ class AttendanceView(GenericViewSet,CreateModelMixin,RetrieveModelMixin,UpdateMo
                 "error_message": str(e)
             }
             return Response(response_data)
-    
-    
-    
-    def create(self, request, *args, **kwargs):
+
+    def update(self, request, *args, **kwargs):
         try:
-            serializer = self.get_serializer(data=request.data)
+            partial = kwargs.pop("partial", False)
+            instance = self.get_object()
+            serializer = self.get_serializer(instance, data=request.data, partial=partial)
             serializer.is_valid(raise_exception=True)
-            self.perform_create(serializer)
-            headers = self.get_success_headers(serializer.data)
+            self.perform_update(serializer)
+            response_data = {
+                "status": "updated",
+                "data": serializer.data
+            }
+            return Response(response_data)
+        except Exception as e:
+            response_data = {
+                "status": "error",
+                "error_message": str(e)
+            }
+            return Response(response_data)
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
             response_data = {
                 "status": "ok",
-                "data": serializer.data
+                "attendance_record": serializer.data,
             }
             return Response(response_data)
         except Exception as e:
