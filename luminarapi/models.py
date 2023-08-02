@@ -73,7 +73,7 @@ class Batch(models.Model):
         return self.name
 class Overview(models.Model):
     name = models.CharField(max_length=255)
-    start_date = models.DateField()
+    start_date = models.CharField(max_length=10)
     batch_code = models.CharField(max_length=50)
     course_name = models.CharField(max_length=255)
     subjects = models.CharField(max_length=200)
@@ -89,7 +89,7 @@ class Attendance(models.Model):
         return self.batchname
 class Assignment(models.Model):
     task_name = models.CharField(max_length=255)
-    date = models.DateField()
+    date = models.CharField(max_length=10)
     time = models.TimeField()
     status = models.CharField(max_length=50)
 
@@ -144,6 +144,7 @@ class Userprofile(models.Model):
     def __str__(self) :
         return self.user_name
 
+<<<<<<< HEAD
 # class DemoVideoScreen(models.Model):
 #     thumbnail = models.ImageField(upload_to='thumbnails/')  # Assumes you have the Pillow library installed for image handling.
 #     videolink = models.URLField(max_length=200)
@@ -152,6 +153,11 @@ class Userprofile(models.Model):
 
 #     def __str__(self):
 #         return f"DemoVideoScreen {self.id}"
+=======
+
+
+
+>>>>>>> 737dcfa5a215cb23099e3db6dd8e2f8480cb1309
 
     
 

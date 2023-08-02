@@ -36,9 +36,14 @@ class BatchSerializer(serializers.ModelSerializer):
          fields="__all__"
 class OverviewSerializer(serializers.ModelSerializer):
     id=serializers.CharField(read_only=True)
+    subjects = serializers.SerializerMethodField()
     class Meta:
          model=Overview
          fields="__all__"
+    def get_subjects(self, obj):
+        # Assuming subjects are stored as a comma-separated string in the database
+        subjects_string = obj.subjects
+        return [subject.strip() for subject in subjects_string.split(',')]
 class AttendanceSerializer(serializers.ModelSerializer):
     id=serializers.CharField(read_only=True)
     class Meta:
@@ -79,6 +84,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model=Userprofile
         fields="__all__"
+
 
 
 

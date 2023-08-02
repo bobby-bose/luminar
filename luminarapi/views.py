@@ -20,6 +20,8 @@ from rest_framework.views import APIView
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from rest_framework import permissions
+
 
 
 def test(request):
@@ -271,6 +273,7 @@ class ModulesAPIView(GenericViewSet, RetrieveModelMixin, CreateModelMixin, Updat
     def retrieve(self, request, *args, **kwargs):
         try:
             pk = kwargs.get('pk')  # Accessing the 'pk' passed through the URL
+<<<<<<< HEAD
             instance = self.get_object()
             serialized_course = self.serializer_class(instance)
 
@@ -326,22 +329,65 @@ class ModulesAPIView(GenericViewSet, RetrieveModelMixin, CreateModelMixin, Updat
     def update(self, request, *args, **kwargs):
         try:
             partial = kwargs.pop('partial', False)
+=======
+>>>>>>> 737dcfa5a215cb23099e3db6dd8e2f8480cb1309
             instance = self.get_object()
-            serializer = self.get_serializer(instance, data=request.data, partial=partial)
-            serializer.is_valid(raise_exception=True)
-            self.perform_update(serializer)
+            serialized_course = self.serializer_class(instance)
+
             response_data = {
                 "status": "ok",
-                "data": serializer.data
+                "course": {
+                    "id": serialized_course.data.get("id"),
+                    "title": serialized_course.data.get("title"),
+                    "thumbnail": serialized_course.data.get("thumbnail"),
+                    "description":serialized_course.data.get("description"),
+                    "full_name":serialized_course.data.get("full_name"),
+                    "cochin":serialized_course.data.get("cochin"),
+                    "calicut":serialized_course.data.get("calicut"),
+                    "duration":serialized_course.data.get("duration"),
+                    "offline_fees":serialized_course.data.get("offline_fees"),
+                    "online_fees":serialized_course.data.get("online_fees"),
+                    "modules": []
+                }
             }
+<<<<<<< HEAD
             return Response(response_data)
 
+=======
+                
+          
+
+            module_no = None
+            module_heading = None
+            module_text = None
+
+            for key, value in serialized_course.data.items():
+                if key.startswith("mod_no"):
+                    if module_no is not None:
+                        response_data["course"]["modules"].append({
+                            "module_no": module_no,
+                            "module_heading": module_heading,
+                            "module_text": module_text
+                        })
+                        print(f"Module No: {module_no}, Module Heading: {module_heading}, Module Text: {module_text}")
+
+                    module_no = value
+                
+
+                elif key.startswith("mod"):
+                    module_heading = serialized_course.data.get("mod_heading")
+                    module_text = value
+
+           
+>>>>>>> 737dcfa5a215cb23099e3db6dd8e2f8480cb1309
         except Exception as e:
             response_data = {
                 "status": "error",
                 "error_message": str(e)
             }
-            return Response(response_data)
+
+        return Response(response_data)
+
 
 
 
@@ -419,95 +465,95 @@ class BatchListView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateModel
                 "error_message": str(e)
             }
             return Response(response_data)
-class OverDetailView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveModelMixin):
+class OverDetailView(GenericViewSet,CreateModelMixin,RetrieveModelMixin,UpdateModelMixin):
     queryset=Overview.objects.all()
     serializer_class=OverviewSerializer
     # authentication_classes=[authentication.TokenAuthentication]
     # permission_classes=[permissions.IsAuthenticated]
     http_method_names=["post","get","put"]
-    def list(self, request, *args, **kwargs):
+    def retrieve(self, request, *args, **kwargs):
         try:
-            overviews = self.get_queryset()
-            total_results = overviews.count()
-
-            if total_results == 0:
-                
-                response_data = {
-                    "status": "error",
-                    "error_message": "No overviews found.",
-                    "totalResults": total_results
-                }
-            else:
-               
-                serialized_overviews = self.serializer_class(overviews, many=True)
-                response_data = {
-                    "status": "ok",
-                    "data": serialized_overviews.data,
-                    "totalResults": total_results
-                }
-        except Exception as e:
+            instance = self.get_object()
+            serializered_course = self.serializer_class(instance)
+            
+            
+            subjects_list = [subject.strip() for subject in instance.subjects.split(',')]
             
             response_data = {
-                "status": "error",
-                "error_message": str(e),
-                "totalResults": total_results
-            }
-        
-        return Response(response_data)
-    def create(self, request, *args, **kwargs):
-        try:
-            serializer = self.get_serializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            self.perform_create(serializer)
-            headers = self.get_success_headers(serializer.data)
-            response_data = {
                 "status": "ok",
-                "data": serializer.data
+                "data": {
+                    "id": serializered_course.data.get("id"),
+                    "start_date":serializered_course.data.get("start_date"),
+                    "batch_code": serializered_course.data.get("batch_code"),
+                    "course_name": serializered_course.data.get("course_name"),
+                    "subjects": subjects_list,
+                  
+                }
             }
-            return Response(response_data)
+
         except Exception as e:
             response_data = {
                 "status": "error",
                 "error_message": str(e)
             }
-            return Response(response_data)
-class AttendanceView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveModelMixin):
+
+        return Response(response_data)
+   
+    
+    def update(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializered_course = self.serializer_class(instance)
+            
+            
+            subjects_list = [subject.strip() for subject in instance.subjects.split(',')]
+            
+            response_data = {
+                "status": "ok",
+                "data": {
+                    "id": serializered_course.data.get("id"),
+                    "start_date":serializered_course.data.get("start_date"),
+                    "batch_code": serializered_course.data.get("batch_code"),
+                    "course_name": serializered_course.data.get("course_name"),
+                    "subjects": subjects_list,
+                  
+                }
+            }
+
+        except Exception as e:
+            response_data = {
+                "status": "error",
+                "error_message": str(e)
+            }
+
+        return Response(response_data)
+class AttendanceView(GenericViewSet,CreateModelMixin,RetrieveModelMixin,UpdateModelMixin):
     queryset=Attendance.objects.all()
     serializer_class=AttendanceSerializer
     # authentication_classes=[authentication.TokenAuthentication]
     # permission_classes=[permissions.IsAuthenticated]
     http_method_names=["get","post"]
-    
-    
-    def list(self, request, *args, **kwargs):
+    def update(self, request, *args, **kwargs):
         try:
-            attendance_records = self.get_queryset()
-            total_results = attendance_records.count()
-
-            if total_results == 0:
-                
-                response_data = {
-                    "status": "error",
-                    "error_message": "No attendance records found.",
-                    "totalResults": total_results
-                }
-            else:
-                
-                serialized_attendance = self.serializer_class(attendance_records, many=True)
-                response_data = {
-                    "status": "ok",
-                    "data": serialized_attendance.data,
-                    "totalResults": total_results
-                }
+            partial = kwargs.pop('partial', False)
+            instance = self.get_object()
+            serializer = self.get_serializer(instance, data=request.data, partial=partial)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+            response_data = {
+                "status": "ok",
+                "data": serializer.data
+            }
+            return Response(response_data)
         except Exception as e:
-            
             response_data = {
                 "status": "error",
-                "error_message": str(e),
-                "totalResults": total_results
+                "error_message": str(e)
             }
-        
-        return Response(response_data)
+            return Response(response_data)
+    
+    
+    
     def create(self, request, *args, **kwargs):
         try:
             serializer = self.get_serializer(data=request.data)
@@ -525,12 +571,12 @@ class AttendanceView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveMode
                 "error_message": str(e)
             }
             return Response(response_data)
-class AssignmentView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveModelMixin):
+class AssignmentView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveModelMixin,UpdateModelMixin):
     queryset=Assignment.objects.all()
     serializer_class=AssignmentSerializer
     # authentication_classes=[authentication.TokenAuthentication]
     # permission_classes=[permissions.IsAuthenticated]
-    http_method_names=["post","get"]
+    http_method_names=["post","get","put"]
     def list(self, request, *args, **kwargs):
         try:
             assignments = self.get_queryset()
