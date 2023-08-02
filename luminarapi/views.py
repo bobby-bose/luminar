@@ -14,6 +14,7 @@ from luminarapi.serializers import UserSerializer,CourseSerializers,DemoSerializ
 from luminarapi.models import Courses,DemoClass,Details,Modules,Batch,Overview,Attendance,Assignment,Announcement,LiveClass,VideoScreen
 from luminarapi.serializers import TestSerializer,JobPortalSerializer,UserProfileSerializer
 from luminarapi.models import Test,JobPortal,Userprofile
+
 from twilio.rest import Client
 from rest_framework.views import APIView
 from django.core.mail import send_mail
@@ -23,6 +24,7 @@ from django.utils.html import strip_tags
 
 def test(request):
     pass
+
 
 
 class UsersView(ModelViewSet):
@@ -261,59 +263,66 @@ class DetailsListAPIView(GenericViewSet,ListModelMixin,RetrieveModelMixin,Create
                 "error_message": str(e)
             }
             return Response(response_data)
-
-class ModulesAPIView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateModelMixin,UpdateModelMixin):
+    
+class ModulesAPIView(GenericViewSet, RetrieveModelMixin, CreateModelMixin, UpdateModelMixin):
     queryset = Modules.objects.all()
-    serializer_class =ModulesSerializer 
-    # authentication_classes=[authentication.TokenAuthentication]
-    # permission_classes=[permissions.IsAuthenticated]
-    http_method_names=["post","get","put"]
-    def list(self, request, *args, **kwargs):
+    serializer_class = ModulesSerializer
+    http_method_names = ["post", "get", "put"]
+    def retrieve(self, request, *args, **kwargs):
         try:
-            modules = self.get_queryset()
-            total_results = modules.count()
+            pk = kwargs.get('pk')  # Accessing the 'pk' passed through the URL
+            instance = self.get_object()
+            serialized_course = self.serializer_class(instance)
 
-            if total_results == 0:
-               
-                response_data = {
-                    "status": "ok",
-                    "error_message": "[]",
-                    "totalResults": total_results
-                }
-            else:
-               
-                serialized_modules = self.serializer_class(modules, many=True)
-                response_data = {
-                    "status": "ok",
-                    "data": serialized_modules.data,
-                    "totalResults": total_results
-                }
-        except Exception as e:
-           
-            response_data = {
-                "status": "error",
-                "error_message": str(e),
-                "totalResults": total_results
-            }
-        
-        return Response(response_data)
-    def create(self, request, *args, **kwargs):
-        try:
-            serializer = self.get_serializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            self.perform_create(serializer)
-            headers = self.get_success_headers(serializer.data)
             response_data = {
                 "status": "ok",
-                "data": serializer.data
+                "course": {
+                    "id": serialized_course.data.get("id"),
+                    "title": serialized_course.data.get("title"),
+                    "thumbnail": serialized_course.data.get("thumbnail"),
+                    "modules": []
+                }
             }
-            return Response(response_data)
+
+            module_no = None
+            module_heading = None
+            module_text = None
+
+            for key, value in serialized_course.data.items():
+                if key.startswith("mod_no"):
+                    if module_no is not None:
+                        response_data["course"]["modules"].append({
+                            "module_no": module_no,
+                            "module_heading": module_heading,
+                            "module_text": module_text
+                        })
+                        print(f"Module No: {module_no}, Module Heading: {module_heading}, Module Text: {module_text}")
+
+                    module_no = value
+                elif key.startswith("mod"):
+                    module_heading = serialized_course.data.get("mod_heading")
+                    module_text = value
+
+            # Append the last module after the loop ends
+            if module_no is not None:
+                response_data["course"]["modules"].append({
+                    "module_no": module_no,
+                    "module_heading": module_heading,
+                    "module_text": module_text
+                })
+                print(f"Module No: {module_no}, Module Heading: {module_heading}, Module Text: {module_text}")
+
         except Exception as e:
             response_data = {
                 "status": "error",
                 "error_message": str(e)
             }
-            return Response(response_data)
+
+        return Response(response_data)
+
+                    
+        
+
     def update(self, request, *args, **kwargs):
         try:
             partial = kwargs.pop('partial', False)
@@ -326,12 +335,17 @@ class ModulesAPIView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateMode
                 "data": serializer.data
             }
             return Response(response_data)
+
         except Exception as e:
             response_data = {
                 "status": "error",
                 "error_message": str(e)
             }
             return Response(response_data)
+
+
+
+        
 
 
 class BatchListView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateModelMixin,UpdateModelMixin):
