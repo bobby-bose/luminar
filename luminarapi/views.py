@@ -273,7 +273,6 @@ class ModulesAPIView(GenericViewSet, RetrieveModelMixin, CreateModelMixin, Updat
     def retrieve(self, request, *args, **kwargs):
         try:
             pk = kwargs.get('pk')  # Accessing the 'pk' passed through the URL
-<<<<<<< HEAD
             instance = self.get_object()
             serialized_course = self.serializer_class(instance)
 
@@ -329,8 +328,6 @@ class ModulesAPIView(GenericViewSet, RetrieveModelMixin, CreateModelMixin, Updat
     def update(self, request, *args, **kwargs):
         try:
             partial = kwargs.pop('partial', False)
-=======
->>>>>>> 737dcfa5a215cb23099e3db6dd8e2f8480cb1309
             instance = self.get_object()
             serialized_course = self.serializer_class(instance)
 
@@ -350,36 +347,8 @@ class ModulesAPIView(GenericViewSet, RetrieveModelMixin, CreateModelMixin, Updat
                     "modules": []
                 }
             }
-<<<<<<< HEAD
             return Response(response_data)
 
-=======
-                
-          
-
-            module_no = None
-            module_heading = None
-            module_text = None
-
-            for key, value in serialized_course.data.items():
-                if key.startswith("mod_no"):
-                    if module_no is not None:
-                        response_data["course"]["modules"].append({
-                            "module_no": module_no,
-                            "module_heading": module_heading,
-                            "module_text": module_text
-                        })
-                        print(f"Module No: {module_no}, Module Heading: {module_heading}, Module Text: {module_text}")
-
-                    module_no = value
-                
-
-                elif key.startswith("mod"):
-                    module_heading = serialized_course.data.get("mod_heading")
-                    module_text = value
-
-           
->>>>>>> 737dcfa5a215cb23099e3db6dd8e2f8480cb1309
         except Exception as e:
             response_data = {
                 "status": "error",

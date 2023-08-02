@@ -144,20 +144,9 @@ class Userprofile(models.Model):
     def __str__(self) :
         return self.user_name
 
-<<<<<<< HEAD
-# class DemoVideoScreen(models.Model):
-#     thumbnail = models.ImageField(upload_to='thumbnails/')  # Assumes you have the Pillow library installed for image handling.
-#     videolink = models.URLField(max_length=200)
-#     description = models.TextField()
-#     uploaded_date = models.DateTimeField(auto_now_add=True)
-
-#     def __str__(self):
-#         return f"DemoVideoScreen {self.id}"
-=======
 
 
 
->>>>>>> 737dcfa5a215cb23099e3db6dd8e2f8480cb1309
 
     
 
