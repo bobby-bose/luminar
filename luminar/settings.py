@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'luminarapi',
+       'drf_yasg',
 
 ]
 
@@ -144,3 +145,12 @@ EMAIL_PORT=587
 EMAI_HOST_USER='luminartechnolab995@gmail.com'
 EMAIL_HOST_PASSWORD='rlovvscccjgzmqzw'
 EMAIL_USE_TLS=True
+
+SWAGGER_SETTINGS = {
+    'DEFAULT_INFO': 'luminar.urls.swagger_info',
+    'SECURITY_DEFINITIONS': {
+        'Basic': {
+            'type': 'basic'
+        }
+    },
+}
