@@ -12,6 +12,11 @@ class DemoClass(models.Model):
 
     def __str__(self):
         return self.name
+class VideoScreenClass(models.Model):
+    name=models.ForeignKey(DemoClass,on_delete=models.DO_NOTHING)
+    description=models.TextField()
+    video_link=models.URLField()
+    uploaded_date=models.CharField(max_length=10)
 class Details(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
@@ -143,6 +148,7 @@ class Userprofile(models.Model):
     gender=models.CharField(max_length=100)
     def __str__(self) :
         return self.user_name
+
 
 
 

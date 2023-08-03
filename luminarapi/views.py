@@ -12,8 +12,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from luminarapi.serializers import UserSerializer,CourseSerializers,DemoSerializers,DetailsSerializer,ModulesSerializer,BatchSerializer,OverviewSerializer,AttendanceSerializer,AssignmentSerializer,AnnouncementSerializer,LiveClassSerializer,VideoScreenSerializer
 from luminarapi.models import Courses,DemoClass,Details,Modules,Batch,Overview,Attendance,Assignment,Announcement,LiveClass,VideoScreen
-from luminarapi.serializers import TestSerializer,JobPortalSerializer,UserProfileSerializer
-from luminarapi.models import Test,JobPortal,Userprofile
+from luminarapi.serializers import TestSerializer,JobPortalSerializer,UserProfileSerializer,VideoScreenClassSerializer
+from luminarapi.models import Test,JobPortal,Userprofile,VideoScreenClass
 
 from twilio.rest import Client
 from rest_framework.views import APIView
@@ -48,8 +48,8 @@ class CoursesListView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateMod
             if total_results == 0:
                
                 response_data = {
-                    "status": "error",
-                    "error_message": "No courses found.",
+                    "status": "ok",
+                    "message": "[]",
                     "totalResults": total_results
                 }
             else:
@@ -57,7 +57,7 @@ class CoursesListView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateMod
                 serialized_courses = self.serializer_class(courses, many=True)
                 response_data = {
                     "status": "ok",
-                    "courses": serialized_courses.data,
+                    "data": serialized_courses.data,
                     "totalResults": total_results
                 }
         except Exception as e:
@@ -95,7 +95,7 @@ class CoursesListView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateMod
             serializer.is_valid(raise_exception=True)
             self.perform_update(serializer)
             response_data = {
-                "status": "updated",
+                "status": "ok",
                 "data": serializer.data
             }
             return Response(response_data)
@@ -137,8 +137,8 @@ class DemoClassListView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateM
                 
                 
                 response_data = {
-                    "status": "error",
-                    "error_message": "No demo classes found.",
+                    "status": "ok",
+                    "message": "[]",
                     "totalResults": total_results
                 }
             else:
@@ -165,7 +165,7 @@ class DemoClassListView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateM
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
             response_data = {
-                "status": "created",
+                "status": "ok",
                 "data": serializer.data
             }
             return Response(response_data)
@@ -183,7 +183,7 @@ class DemoClassListView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateM
             serializer.is_valid(raise_exception=True)
             self.perform_update(serializer)
             response_data = {
-                "status": "updated",
+                "status": "ok",
                 "data": serializer.data
             }
             return Response(response_data)
@@ -206,14 +206,14 @@ class DetailsListAPIView(GenericViewSet,ListModelMixin,RetrieveModelMixin,Create
             total_results = details.count()
 
             if total_results == 0:
-                # If there are no details, set the status as "error"
+               
                 response_data = {
-                    "status": "error",
-                    "error_message": "No details found.",
+                    "status": "ok",
+                    "message": "[]",
                     "totalResults": total_results
                 }
             else:
-                # If there are details, set the status as "ok"
+               
                 serialized_details = self.serializer_class(details, many=True)
                 response_data = {
                     "status": "ok",
@@ -221,7 +221,7 @@ class DetailsListAPIView(GenericViewSet,ListModelMixin,RetrieveModelMixin,Create
                     "totalResults": total_results
                 }
         except Exception as e:
-            # If there is an exception, set the status as "error" and print the error message
+            
             response_data = {
                 "status": "error",
                 "error_message": str(e),
@@ -236,7 +236,7 @@ class DetailsListAPIView(GenericViewSet,ListModelMixin,RetrieveModelMixin,Create
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
             response_data = {
-                "status": "created",
+                "status": "ok",
                 "data": serializer.data
             }
             return Response(response_data)
@@ -255,7 +255,7 @@ class DetailsListAPIView(GenericViewSet,ListModelMixin,RetrieveModelMixin,Create
             serializer.is_valid(raise_exception=True)
             self.perform_update(serializer)
             response_data = {
-                "status": "updated",
+                "status": "ok",
                 "data": serializer.data
             }
             return Response(response_data)
@@ -279,7 +279,7 @@ class ModulesAPIView(GenericViewSet, RetrieveModelMixin, CreateModelMixin, Updat
 
             response_data = {
                 "status": "ok",
-                "course": {
+                "data": {
                     "id": serialized_instance.data.get("id"),
                     "title": serialized_instance.data.get("title"),
                     "thumbnail": serialized_instance.data.get("thumbnail"),
@@ -310,8 +310,8 @@ class ModulesAPIView(GenericViewSet, RetrieveModelMixin, CreateModelMixin, Updat
             
         except Modules.DoesNotExist:
             response_data = {
-                "status": "error",
-                "error_message": "Module not found"
+                "status": "ok",
+                "message": "[]"
             }
             return Response(response_data, status=404)
         
@@ -328,7 +328,7 @@ class ModulesAPIView(GenericViewSet, RetrieveModelMixin, CreateModelMixin, Updat
             serialized_instance = self.serializer_class(instance)
             response_data = {
             "status": "ok",
-            "course": {
+            "data": {
                 "id": serialized_instance.data.get("id"),
                 "title": serialized_instance.data.get("title"),
                 "thumbnail": serialized_instance.data.get("thumbnail"),
@@ -358,8 +358,8 @@ class ModulesAPIView(GenericViewSet, RetrieveModelMixin, CreateModelMixin, Updat
             return Response(response_data)
         except Modules.DoesNotExist:
             response_data = {
-                "status": "error",
-                "error_message": "Module not found"
+                "status": "ok",
+                "error_message": "[]"
             }
             return Response(response_data, status=404)
         
@@ -405,8 +405,8 @@ class BatchListView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateModel
             if total_results == 0:
                 
                 response_data = {
-                    "status": "error",
-                    "error_message": "No batches found.",
+                    "status": "ok",
+                    "message": "[]",
                     "totalResults": total_results
                 }
             else:
@@ -547,9 +547,6 @@ class AttendanceView(GenericViewSet,CreateModelMixin,RetrieveModelMixin,UpdateMo
     # authentication_classes=[authentication.TokenAuthentication]
     # permission_classes=[permissions.IsAuthenticated]
     http_method_names=["get","post","put"]
-    
-    
-
     def create(self, request, *args, **kwargs):
         try:
             serializer = self.get_serializer(data=request.data)
@@ -557,7 +554,7 @@ class AttendanceView(GenericViewSet,CreateModelMixin,RetrieveModelMixin,UpdateMo
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
             response_data = {
-                "status": "created",
+                "status": "ok",
                 "data": serializer.data
             }
             return Response(response_data)
@@ -570,22 +567,29 @@ class AttendanceView(GenericViewSet,CreateModelMixin,RetrieveModelMixin,UpdateMo
 
     def update(self, request, *args, **kwargs):
         try:
-            partial = kwargs.pop("partial", False)
             instance = self.get_object()
-            serializer = self.get_serializer(instance, data=request.data, partial=partial)
-            serializer.is_valid(raise_exception=True)
-            self.perform_update(serializer)
+            serializered_course = self.serializer_class(instance)
+
+            # Instead of manually specifying fields, you can use serializer.data to get the updated data
             response_data = {
-                "status": "updated",
-                "data": serializer.data
+                "status": "ok",
+                "data": {
+                    "id": serializered_course.data.get("id"),
+              
+                    "batch_name": serializered_course.data.get("batch_name"),
+                      "class_attended": serializered_course.data.get("class_attended"),
+                       "total_classes":serializered_course.data.get("total_classes"),
+
+                    
+                }
             }
-            return Response(response_data)
+            return Response(response_data)  # Use HTTP_200_OK constant
         except Exception as e:
             response_data = {
                 "status": "error",
                 "error_message": str(e)
             }
-            return Response(response_data)
+            return Response(response_data)  # Use HTTP_400_BAD_REQUEST constant
 
     def retrieve(self, request, *args, **kwargs):
         try:
@@ -593,7 +597,7 @@ class AttendanceView(GenericViewSet,CreateModelMixin,RetrieveModelMixin,UpdateMo
             serializer = self.get_serializer(instance)
             response_data = {
                 "status": "ok",
-                "attendance_record": serializer.data,
+                "data": serializer.data,
             }
             return Response(response_data)
         except Exception as e:
@@ -602,6 +606,10 @@ class AttendanceView(GenericViewSet,CreateModelMixin,RetrieveModelMixin,UpdateMo
                 "error_message": str(e)
             }
             return Response(response_data)
+    
+    
+
+    
 class AssignmentView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveModelMixin,UpdateModelMixin):
     queryset=Assignment.objects.all()
     serializer_class=AssignmentSerializer
@@ -616,8 +624,8 @@ class AssignmentView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveMode
             if total_results == 0:
                
                 response_data = {
-                    "status": "error",
-                    "error_message": "No assignments found.",
+                    "status": "ok",
+                    "message": "[]",
                     "totalResults": total_results
                 }
             else:
@@ -625,7 +633,7 @@ class AssignmentView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveMode
                 serialized_assignments = self.serializer_class(assignments, many=True)
                 response_data = {
                     "status": "ok",
-                    "assignments": serialized_assignments.data,
+                    "data": serialized_assignments.data,
                     "totalResults": total_results
                 }
         except Exception as e:
@@ -669,8 +677,8 @@ class AnnouncementView(GenericViewSet,CreateModelMixin,ListModelMixin):
             if total_results == 0:
                 
                 response_data = {
-                    "status": "error",
-                    "error_message": "No announcements found.",
+                    "status": "ok",
+                    "message": "[]",
                     "totalResults": total_results
                 }
             else:
@@ -722,8 +730,8 @@ class LiveClassView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveModel
             if total_results == 0:
                 
                 response_data = {
-                    "status": "error",
-                    "error_message": "No live classes found.",
+                    "status": "ok",
+                    "message": "[]",
                     "totalResults": total_results
                 }
             else:
@@ -774,15 +782,15 @@ class VideoScreenView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveMod
             if total_results == 0:
                
                 response_data = {
-                    "status": "error",
-                    "error_message": "No video screens found.",
+                    "status": "ok",
+                    "message": "[]",
                     "totalResults": total_results
                 }
             else:
                 serialized_video_screens = self.serializer_class(video_screens, many=True)
                 response_data = {
                     "status": "ok",
-                    "video_screens": serialized_video_screens.data,
+                    "data": serialized_video_screens.data,
                     "totalResults": total_results
                 }
         except Exception as e:
@@ -825,8 +833,8 @@ class TestView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveModelMixin
             if total_results == 0:
                 
                 response_data = {
-                    "status": "error",
-                    "error_message": "No tests found.",
+                    "status": "ok",
+                    "message": "[]",
                     "totalResults": total_results
                 }
             else:
@@ -877,8 +885,8 @@ class JobPortalView(GenericViewSet,CreateModelMixin,ListModelMixin):
             if total_results == 0:
                 
                 response_data = {
-                    "status": "error",
-                    "error_message": "No job portals found.",
+                    "status": "ok",
+                    "message": "[]",
                     "totalResults": total_results
                 }
             else:
@@ -928,8 +936,8 @@ class UserProfileView(GenericViewSet, CreateModelMixin, ListModelMixin,UpdateMod
             total_results = user_profiles.count()
             if total_results == 0:
                 response_data = {
-                    "status": "error",
-                    "error_message": "No user profiles found.",
+                    "status": "ok",
+                    "message": "[]",
                     "totalResults": total_results
                 }
             else:
@@ -1107,3 +1115,74 @@ def Resetpassword(request, id):
 
     else:
         return HttpResponse("Invalid request method.")
+class VideoScreenClassViewSet(GenericViewSet,CreateModelMixin,ListModelMixin,UpdateModelMixin,RetrieveModelMixin):
+    queryset = VideoScreenClass.objects.all()
+    serializer_class = VideoScreenClassSerializer
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        response_data = {
+            "status": "ok",
+            "data": serializer.data
+        }
+        return Response(response_data)
+
+    def update(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+
+            response_data = {
+                "status": "ok",
+                "data": serializer.data
+            }
+            return Response(response_data)
+        
+        except Exception as e:
+            response_data = {
+                "status": "error",
+                "error_message": str(e)
+            }
+            return Response(response_data)
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            response_data = {
+                "status": "ok",
+                "data": serializer.data,
+            }
+            return Response(response_data)
+        
+        except Exception as e:
+            response_data = {
+                "status": "error",
+                "error_message": str(e)
+            }
+            return Response(response_data)
+    def list(self, request, *args, **kwargs):
+        try:
+            queryset = self.filter_queryset(self.get_queryset())
+            serializer = self.get_serializer(queryset, many=True)
+            if not serializer.data:  # Check if the data list is empty
+                response_data = {
+                    "status": "ok",
+                    "data": []
+                }
+            else:
+                response_data = {
+                    "status": "ok",
+                    "data": serializer.data
+                }
+            return Response(response_data)
+        except Exception as e:
+            response_data = {
+                "status": "error",
+                "error_message": str(e)
+            }
+            return Response(response_data)

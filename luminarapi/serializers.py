@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from luminarapi.models import Courses,DemoClass,Details,Modules,Batch,Overview,Attendance,Assignment,Announcement,LiveClass,VideoScreen,Test,JobPortal,Userprofile
+from luminarapi.models import Courses,DemoClass,Details,Modules,Batch,Overview,Attendance,Assignment,Announcement,LiveClass,VideoScreen,Test,JobPortal,Userprofile,VideoScreenClass
 
 class UserSerializer(serializers.ModelSerializer):
     id=serializers.CharField(read_only=True)
@@ -84,6 +84,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model=Userprofile
         fields="__all__"
+class VideoScreenClassSerializer(serializers.ModelSerializer):
+    name=DemoSerializers()
+    class Meta:
+        model=VideoScreenClass
+        fields=['id', 'name', 'description', 'video_link']
+
 
 
 
