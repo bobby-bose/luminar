@@ -123,7 +123,7 @@ class VideoScreen(models.Model):
 class Test(models.Model):
     batch_name=models.CharField(max_length=300)
     test_title=models.CharField(max_length=300)
-    date=models.DateField()
+    date=models.CharField(max_length=100)
     total_mark=models.PositiveIntegerField(default=100)
     obtained_mark=models.PositiveIntegerField()
     def __str__(self):
