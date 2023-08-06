@@ -55,26 +55,15 @@ router.register("api/jobportal",api_view.JobPortalView,basename="jobportal"),
 router.register("api/userprofile",api_view.UserProfileView,basename="userprofile"),
 router.register("api/videoscreenclass",api_view.VideoScreenClassViewSet,basename="videoscreenclass"),
 router.register("api/logo",api_view.LogoViewSet,basename="logo"),
-
-
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/token/",ObtainAuthToken.as_view()),
     path("api/sendpassword/",api_view.SendPassword),
-
     path('api/password-reset/<int:id>/',api_view.PasswordReset),
     path("api/verifyotp/<int:id>/", api_view.VerifyOtp),
-     path("api/resetpassword/<int:id>/", api_view.Resetpassword),
+    path("api/resetpassword/<int:id>/", api_view.Resetpassword),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-
-     
-
-
-    
-    
-   
     path("", include(router.urls))
 
    
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)+router._urls
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

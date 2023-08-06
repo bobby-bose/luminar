@@ -18,7 +18,7 @@ class VideoScreenClass(models.Model):
     video_link=models.URLField()
     uploaded_date=models.CharField(max_length=10)
 class Details(models.Model):
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=100)
     description = models.TextField()
     duration=models.CharField(max_length=300,default="6 months")
     offline_fees = models.DecimalField(max_digits=10, decimal_places=2)
@@ -27,7 +27,7 @@ class Details(models.Model):
     def __str__(self):
         return self.title
 class Modules(models.Model):
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=100)
     thumbnail = models.ImageField(upload_to='thumbnails')
     description = models.TextField(default=False)
     full_name=models.CharField(max_length=100,default=False)
