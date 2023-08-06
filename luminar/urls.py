@@ -54,6 +54,7 @@ router.register("api/test",api_view.TestView,basename="test"),
 router.register("api/jobportal",api_view.JobPortalView,basename="jobportal"),
 router.register("api/userprofile",api_view.UserProfileView,basename="userprofile"),
 router.register("api/videoscreenclass",api_view.VideoScreenClassViewSet,basename="videoscreenclass"),
+router.register("api/logo",api_view.LogoViewSet,basename="logo"),
 
 
 

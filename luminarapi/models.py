@@ -89,6 +89,7 @@ class Attendance(models.Model):
     batch_name = models.CharField(max_length=255)
     class_attended = models.IntegerField(default=0)
     total_classes = models.IntegerField(default=0)
+    monthly_attedance=models.IntegerField(default=0)
 
     def __str__(self):
         return self.batchname
@@ -106,15 +107,10 @@ class Announcement(models.Model):
     date=models.DateField()
     def __str__(self) :
         return self.title
-class LiveClass(models.Model):
-    batch_name=models.CharField(max_length=300)
-    trainer_name=models.CharField(max_length=300)
-    time=models.TimeField()
-    status=models.BooleanField(default=True)
-    url_link=models.URLField()
 
-    def __str__(self) :
-        return self.batch_name
+ 
+
+   
 class VideoScreen(models.Model):
     course_name=models.CharField(max_length=300)
     description=models.CharField(max_length=500)
@@ -148,6 +144,19 @@ class Userprofile(models.Model):
     gender=models.CharField(max_length=100)
     def __str__(self) :
         return self.user_name
+class Logo(models.Model):
+    image=models.ImageField(upload_to="image")
+
+class LiveClass(models.Model):
+    batch_name=models.CharField(max_length=300)
+    trainer_name=models.CharField(max_length=300)
+    time=models.TimeField()
+    status=models.BooleanField(default=True)
+    url_link=models.URLField()
+    logo = models.ForeignKey(Logo, on_delete=models.SET_NULL, null=True, blank=True)
+    def __str__(self) :
+        return self.batch_name
+
 
 
 

@@ -12,8 +12,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from luminarapi.serializers import UserSerializer,CourseSerializers,DemoSerializers,DetailsSerializer,ModulesSerializer,BatchSerializer,OverviewSerializer,AttendanceSerializer,AssignmentSerializer,AnnouncementSerializer,LiveClassSerializer,VideoScreenSerializer
 from luminarapi.models import Courses,DemoClass,Details,Modules,Batch,Overview,Attendance,Assignment,Announcement,LiveClass,VideoScreen
-from luminarapi.serializers import TestSerializer,JobPortalSerializer,UserProfileSerializer,VideoScreenClassSerializer
-from luminarapi.models import Test,JobPortal,Userprofile,VideoScreenClass
+from luminarapi.serializers import TestSerializer,JobPortalSerializer,UserProfileSerializer,VideoScreenClassSerializer,LogoSerializer
+from luminarapi.models import Test,JobPortal,Userprofile,VideoScreenClass,Logo
 
 from twilio.rest import Client
 from rest_framework.views import APIView
@@ -279,7 +279,7 @@ class ModulesAPIView(GenericViewSet, RetrieveModelMixin, CreateModelMixin, Updat
 
             response_data = {
                 "status": "ok",
-                "data": {
+                "course": {
                     "id": serialized_instance.data.get("id"),
                     "title": serialized_instance.data.get("title"),
                     "thumbnail": serialized_instance.data.get("thumbnail"),
@@ -310,8 +310,8 @@ class ModulesAPIView(GenericViewSet, RetrieveModelMixin, CreateModelMixin, Updat
             
         except Modules.DoesNotExist:
             response_data = {
-                "status": "ok",
-                "message": "[]"
+                "status": "error",
+                "error_message": "Module not found"
             }
             return Response(response_data, status=404)
         
@@ -328,7 +328,7 @@ class ModulesAPIView(GenericViewSet, RetrieveModelMixin, CreateModelMixin, Updat
             serialized_instance = self.serializer_class(instance)
             response_data = {
             "status": "ok",
-            "data": {
+            "course": {
                 "id": serialized_instance.data.get("id"),
                 "title": serialized_instance.data.get("title"),
                 "thumbnail": serialized_instance.data.get("thumbnail"),
@@ -358,8 +358,8 @@ class ModulesAPIView(GenericViewSet, RetrieveModelMixin, CreateModelMixin, Updat
             return Response(response_data)
         except Modules.DoesNotExist:
             response_data = {
-                "status": "ok",
-                "error_message": "[]"
+                "status": "error",
+                "error_message": "Module not found"
             }
             return Response(response_data, status=404)
         
@@ -390,6 +390,7 @@ class ModulesAPIView(GenericViewSet, RetrieveModelMixin, CreateModelMixin, Updat
             return Response(response_data, status=500)
             
         
+    
     
 class BatchListView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateModelMixin,UpdateModelMixin):
     queryset=Batch.objects.all()
@@ -716,12 +717,12 @@ class AnnouncementView(GenericViewSet,CreateModelMixin,ListModelMixin):
                 "error_message": str(e)
             }
             return Response(response_data)
-class LiveClassView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveModelMixin):
+class LiveClassView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveModelMixin,UpdateModelMixin):
     queryset=LiveClass.objects.all()
     serializer_class=LiveClassSerializer
     # authentication_classes=[authentication.TokenAuthentication]
     # permission_classes=[permissions.IsAuthenticated]
-    http_method_names=["get","post"]
+    http_method_names=["get","post","put"]
     def list(self, request, *args, **kwargs):
         try:
             live_classes = self.get_queryset()
@@ -768,6 +769,22 @@ class LiveClassView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveModel
                 "error_message": str(e)
             }
             return Response(response_data)
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            response_data = {
+                "status": "ok",
+                "data": serializer.data,
+            }
+            return Response(response_data)
+        except Exception as e:
+            response_data = {
+                "status": "error",
+                "error_message": str(e)
+            }
+            return Response(response_data)
+    
 class VideoScreenView(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveModelMixin):
     queryset=VideoScreen.objects.all()
     serializer_class=VideoScreenSerializer
@@ -1186,3 +1203,19 @@ class VideoScreenClassViewSet(GenericViewSet,CreateModelMixin,ListModelMixin,Upd
                 "error_message": str(e)
             }
             return Response(response_data)
+class LogoViewSet(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveModelMixin):
+    queryset = Logo.objects.all()
+    serializer_class = LogoSerializer
+    http_method_names=['get','post','put']
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        
+        response_data = {
+            "status": "ok",
+            "data": serializer.data
+        }
+        
+        return Response(response_data)
+    
