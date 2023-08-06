@@ -279,7 +279,7 @@ class ModulesAPIView(GenericViewSet, RetrieveModelMixin, CreateModelMixin, Updat
 
             response_data = {
                 "status": "ok",
-                "course": {
+                "data": {
                     "id": serialized_instance.data.get("id"),
                     "title": serialized_instance.data.get("title"),
                     "thumbnail": serialized_instance.data.get("thumbnail"),
@@ -328,7 +328,7 @@ class ModulesAPIView(GenericViewSet, RetrieveModelMixin, CreateModelMixin, Updat
             serialized_instance = self.serializer_class(instance)
             response_data = {
             "status": "ok",
-            "course": {
+            "data": {
                 "id": serialized_instance.data.get("id"),
                 "title": serialized_instance.data.get("title"),
                 "thumbnail": serialized_instance.data.get("thumbnail"),
@@ -377,7 +377,7 @@ class ModulesAPIView(GenericViewSet, RetrieveModelMixin, CreateModelMixin, Updat
 
             response_data = {
                 "status": "ok",
-                "course": serializer.data
+                "data": serializer.data
             }
 
             return Response(response_data, status=201)  # Return 201 Created status
