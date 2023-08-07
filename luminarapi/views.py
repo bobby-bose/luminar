@@ -10,10 +10,10 @@ from rest_framework.mixins import ListModelMixin,RetrieveModelMixin,CreateModelM
 from rest_framework import authentication,permissions
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
-from luminarapi.serializers import UserSerializer,CourseSerializers,DemoSerializers,DetailsSerializer,ModulesSerializer,BatchSerializer,OverviewSerializer,AttendanceSerializer,AssignmentSerializer,AnnouncementSerializer,LiveClassSerializer,VideoScreenSerializer
-from luminarapi.models import Courses,DemoClass,Details,Modules,Batch,Overview,Attendance,Assignment,Announcement,LiveClass,VideoScreen
-from luminarapi.serializers import TestSerializer,JobPortalSerializer,UserProfileSerializer,VideoScreenClassSerializer,LogoSerializer
-from luminarapi.models import Test,JobPortal,Userprofile,VideoScreenClass,Logo
+from luminarapi.serializers import UserSerializer,DemoSerializers,DetailsSerializer,BatchSerializer,OverviewSerializer,AttendanceSerializer,AssignmentSerializer,AnnouncementSerializer,LiveClassSerializer,VideoScreenSerializer
+from luminarapi.models import DemoClass,Details,Batch,Overview,Attendance,Assignment,Announcement,LiveClass,VideoScreen
+from luminarapi.serializers import TestSerializer,JobPortalSerializer,UserProfileSerializer,VideoScreenClassSerializer,LogoSerializer,ModuleSerializer
+from luminarapi.models import Test,JobPortal,Userprofile,VideoScreenClass,Logo,Module
 
 from twilio.rest import Client
 from rest_framework.views import APIView
@@ -34,91 +34,6 @@ class UsersView(ModelViewSet):
     queryset=get_user_model().objects.all()
     model=User
     http_method_names=["post","get"]
-class CoursesListView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateModelMixin,UpdateModelMixin):
-    queryset=Courses.objects.all()
-    serializer_class=CourseSerializers
-    # authentication_classes=[authentication.TokenAuthentication]
-    # permission_classes=[permissions.IsAuthenticated]
-    http_method_names=["post","get","put"]
-    def list(self, request, *args, **kwargs):
-        try:
-            courses = self.get_queryset()
-            total_results = courses.count()
-
-            if total_results == 0:
-               
-                response_data = {
-                    "status": "ok",
-                    "message": "[]",
-                    "totalResults": total_results
-                }
-            else:
-               
-                serialized_courses = self.serializer_class(courses, many=True)
-                response_data = {
-                    "status": "ok",
-                    "data": serialized_courses.data,
-                    "totalResults": total_results
-                }
-        except Exception as e:
-            # If there is an exception, set the status as "error" and print the error message
-            response_data = {
-                "status": "error",
-                "error_message": str(e),
-                "totalResults": total_results
-            }
-        
-        return Response(response_data)
-    def create(self, request, *args, **kwargs):
-        try:
-            serializer = self.get_serializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            self.perform_create(serializer)
-            headers = self.get_success_headers(serializer.data)
-            response_data = {
-                "status": "ok",
-                "data": serializer.data
-            }
-            return Response(response_data)
-        except Exception as e:
-            response_data = {
-                "status": "error",
-                "error_message": str(e)
-            }
-            return Response(response_data)
-
-    def update(self, request, *args, **kwargs):
-        try:
-            partial = kwargs.pop('partial', False)
-            instance = self.get_object()
-            serializer = self.get_serializer(instance, data=request.data, partial=partial)
-            serializer.is_valid(raise_exception=True)
-            self.perform_update(serializer)
-            response_data = {
-                "status": "ok",
-                "data": serializer.data
-            }
-            return Response(response_data)
-        except Exception as e:
-            response_data = {
-                "status": "error",
-                "error_message": str(e)
-            }
-            return Response(response_data)
-    def retrieve(self, request, *args, **kwargs):
-        try:
-            instance = self.get_object()
-            serialized_course = self.serializer_class(instance)
-            response_data = {
-                "status": "ok",
-                "course": serialized_course.data
-            }
-        except Exception as e:
-            response_data = {
-                "status": "error",
-                "error_message": str(e)
-            }
-        return Response(response_data)
 
 
     
@@ -266,131 +181,7 @@ class DetailsListAPIView(GenericViewSet,ListModelMixin,RetrieveModelMixin,Create
             }
             return Response(response_data)
     
-class ModulesAPIView(GenericViewSet, RetrieveModelMixin, CreateModelMixin, UpdateModelMixin):
-    queryset = Modules.objects.all()
-    serializer_class = ModulesSerializer
-    http_method_names = ["post", "get", "put"]
-   
-    def retrieve(self, request, *args, **kwargs):
-        try:
-            pk = kwargs.get('pk')  # Accessing the 'pk' passed through the URL
-            instance = Modules.objects.get(pk=pk)  # Assuming you want to retrieve a Modules instance
-            serialized_instance = self.serializer_class(instance)  # You need to define serializer_class
 
-            response_data = {
-                "status": "ok",
-                "data": {
-                    "id": serialized_instance.data.get("id"),
-                    "title": serialized_instance.data.get("title"),
-                    "thumbnail": serialized_instance.data.get("thumbnail"),
-                     "description":serialized_instance.data.get("description"),
-                    "full_name":serialized_instance.data.get("full_name"),
-                    "cochin":serialized_instance.data.get("cochin"),
-                    "calicut":serialized_instance.data.get("calicut"),
-                    "duration":serialized_instance.data.get("duration"),
-                    "offline_fees":serialized_instance.data.get("offline_fees"),
-                    "online_fees":serialized_instance.data.get("online_fees"),
-                    "modules": []
-                }
-            }
-
-            for i in range(1, 11):  # Assuming there are 10 modules numbered from 1 to 10
-                module_no = serialized_instance.data[f"mod_no{i}"]
-                module_heading = serialized_instance.data[f"mod{i}_heading"]
-                module_text = serialized_instance.data[f"mod{i}_text"]
-
-                if module_no:
-                    response_data["course"]["modules"].append({
-                        "module_no": module_no,
-                        "module_heading": module_heading,
-                        "module_text": module_text
-                    })
-
-            return Response(response_data)
-            
-        except Modules.DoesNotExist:
-            response_data = {
-                "status": "error",
-                "error_message": "Module not found"
-            }
-            return Response(response_data, status=404)
-        
-        except Exception as e:
-            response_data = {
-                "status": "error",
-                "error_message": str(e)
-            }
-            return Response(response_data, status=500)
-    def update(self, request, *args, **kwargs):
-        try:
-                
-            instance = self.get_object()
-            serialized_instance = self.serializer_class(instance)
-            response_data = {
-            "status": "ok",
-            "data": {
-                "id": serialized_instance.data.get("id"),
-                "title": serialized_instance.data.get("title"),
-                "thumbnail": serialized_instance.data.get("thumbnail"),
-                    "description":serialized_instance.data.get("description"),
-                "full_name":serialized_instance.data.get("full_name"),
-                "cochin":serialized_instance.data.get("cochin"),
-                "calicut":serialized_instance.data.get("calicut"),
-                "duration":serialized_instance.data.get("duration"),
-                "offline_fees":serialized_instance.data.get("offline_fees"),
-                "online_fees":serialized_instance.data.get("online_fees"),
-                "modules": []
-            }
-        }
-
-            for i in range(1, 11):  # Assuming there are 10 modules numbered from 1 to 10
-                module_no = serialized_instance.data[f"mod_no{i}"]
-                module_heading = serialized_instance.data[f"mod{i}_heading"]
-                module_text = serialized_instance.data[f"mod{i}_text"]
-
-                if module_no:
-                    response_data["course"]["modules"].append({
-                        "module_no": module_no,
-                        "module_heading": module_heading,
-                        "module_text": module_text
-                    })
-
-            return Response(response_data)
-        except Modules.DoesNotExist:
-            response_data = {
-                "status": "error",
-                "error_message": "Module not found"
-            }
-            return Response(response_data, status=404)
-        
-        except Exception as e:
-            response_data = {
-                "status": "error",
-                "error_message": str(e)
-            }
-            return Response(response_data, status=500)
-    def create(self, request, *args, **kwargs):
-        try:
-            serializer = self.get_serializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            self.perform_create(serializer)
-
-            response_data = {
-                "status": "ok",
-                "data": serializer.data
-            }
-
-            return Response(response_data, status=201)  # Return 201 Created status
-
-        except Exception as e:
-            response_data = {
-                "status": "error",
-                "error_message": str(e)
-            }
-            return Response(response_data, status=500)
-            
-        
-    
     
 class BatchListView(GenericViewSet,ListModelMixin,RetrieveModelMixin,CreateModelMixin,UpdateModelMixin):
     queryset=Batch.objects.all()
@@ -1219,3 +1010,17 @@ class LogoViewSet(GenericViewSet,CreateModelMixin,ListModelMixin,RetrieveModelMi
         
         return Response(response_data)
     
+class ModuleView(GenericViewSet,CreateModelMixin,RetrieveModelMixin,UpdateModelMixin,ListModelMixin):
+    queryset = Module.objects.all()
+    serializer_class = ModuleSerializer
+    http_method_names=['get','post','put']
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = ModuleSerializer (queryset, many=True)
+        
+        response_data = {
+            "status": "ok",
+            "data": serializer.data
+        }
+
+        return Response(response_data)

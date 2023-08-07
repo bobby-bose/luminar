@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from luminarapi.models import Courses,DemoClass,Details,Modules,Batch,Overview,Attendance,Assignment,Announcement,LiveClass,VideoScreen,Test,JobPortal,Userprofile,VideoScreenClass,Logo
+from luminarapi.models import DemoClass,Details,Batch,Overview,Attendance,Assignment,Announcement,LiveClass,VideoScreen,Test,JobPortal,Userprofile,VideoScreenClass,Logo,Module
 
 class UserSerializer(serializers.ModelSerializer):
     id=serializers.CharField(read_only=True)
@@ -9,26 +9,35 @@ class UserSerializer(serializers.ModelSerializer):
         fields=["id","username","email","password"]
     def create(self,validated_data):
         return User.objects.create_user(**validated_data)
-class CourseSerializers(serializers.ModelSerializer):
-    id=serializers.CharField(read_only=True)
-    class Meta:
-        model =Courses 
-        fields = ['id', 'name', 'image']
+# class CourseSerializers(serializers.ModelSerializer):
+#     id=serializers.CharField(read_only=True)
+#     class Meta:
+#         model =Courses 
+#         fields = ['id', 'name', 'image']
 class DemoSerializers(serializers.ModelSerializer):
     id=serializers.CharField(read_only=True)
     class Meta:
         model=DemoClass
         fields=['id','name','thumbnail']
+class ModuleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Module
+        fields = "__all__"
+
 class DetailsSerializer(serializers.ModelSerializer):
-    id=serializers.CharField(read_only=True)
+    
+    modules = ModuleSerializer(many=True,read_only=True)  # Include nested serialization of related modules
+
     class Meta:
         model = Details
-        fields = ['id','title','description','duration','online_fees','offline_fees','thumbnail']
-class ModulesSerializer(serializers.ModelSerializer):
-    id=serializers.CharField(read_only=True)
-    class Meta:
-        model =Modules
-        fields = '__all__'
+        fields = ['id', 'title', 'description', 'duration', 'offline_fees', 'online_fees', 'thumbnail', 'full_name', 'cochin', 'calicut', 'modules']
+
+
+# class ModulesSerializer(serializers.ModelSerializer):
+#     id=serializers.CharField(read_only=True)
+#     class Meta:
+#         model =Modules
+#         fields = '__all__'
 class BatchSerializer(serializers.ModelSerializer):
      id=serializers.CharField(read_only=True)
      class Meta:

@@ -1,10 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-class Courses(models.Model):
-    name=models.CharField(max_length=300)
-    image=models.ImageField(upload_to="images",null=True,blank=True)
-    def __str__(self):
-        return self.name
+
 class DemoClass(models.Model):
     name = models.CharField(max_length=100)
     
@@ -24,51 +20,21 @@ class Details(models.Model):
     offline_fees = models.DecimalField(max_digits=10, decimal_places=2)
     online_fees = models.DecimalField(max_digits=10, decimal_places=2)
     thumbnail = models.ImageField(upload_to='thumbnails')
-    def __str__(self):
-        return self.title
-class Modules(models.Model):
-    title = models.CharField(max_length=100)
-    thumbnail = models.ImageField(upload_to='thumbnails')
-    description = models.TextField(default=False)
     full_name=models.CharField(max_length=100,default=False)
     cochin=models.CharField(max_length=100,default=False)
     calicut=models.CharField(max_length=100,default=False)
-    duration=models.CharField(max_length=300,default="6 months")
-    offline_fees = models.DecimalField(max_digits=10, decimal_places=2,default=False)
-    online_fees = models.DecimalField(max_digits=10, decimal_places=2,default=False)
-    mod_no1=models.CharField(max_length=100,default="")
-    mod1_heading=models.TextField(default=False)
-    mod1_text = models.TextField()
-    mod_no2=models.CharField(max_length=100,default="")
-    mod2_heading=models.TextField(default=False)
-    mod2_text = models.TextField()
-    mod_no3=models.CharField(max_length=100,default="",null=True,blank=True)
-    mod3_heading=models.TextField(blank=True,null=True)
-    mod3_text = models.TextField(blank=True,null=True)
-    mod_no4=models.CharField(max_length=100,default="",null=True,blank=True)
-    mod4_heading=models.TextField(blank=True,null=True)
-    mod4_text = models.TextField(blank=True,null=True)
-    mod_no5=models.CharField(max_length=100,default="",null=True,blank=True)
-    mod5_heading=models.TextField(blank=True,null=True)
-    mod5_text = models.TextField(blank=True,null=True)
-    mod_no6=models.CharField(max_length=100,default="",null=True,blank=True)
-    mod6_heading=models.TextField(blank=True,null=True)
-    mod6_text = models.TextField(blank=True,null=True)
-    mod_no7=models.CharField(max_length=100,default="",null=True,blank=True)
-    mod7_heading=models.TextField(blank=True,null=True)
-    mod7_text = models.TextField(blank=True,null=True)
-    mod_no8=models.CharField(max_length=100,default="",null=True,blank=True)
-    mod8_heading=models.TextField(blank=True,null=True)
-    mod8_text = models.TextField(blank=True,null=True)
-    mod_no9=models.CharField(max_length=100,default="",null=True,blank=True)
-    mod9_heading=models.TextField(blank=True,null=True)
-    mod9_text = models.TextField(blank=True,null=True)
-    mod_no10=models.CharField(max_length=100,default="",null=True,blank=True)
-    mod10_heading=models.TextField(blank=True,null=True)
-    mod10_text = models.TextField(blank=True,null=True)
     def __str__(self):
         return self.title
-
+    
+    def modules(self):
+       
+        return self.module_set.all()
+    
+class Module(models.Model):
+    name=models.ForeignKey(Details,on_delete=models.DO_NOTHING, null=True, blank=True)
+    mod_no=models.PositiveIntegerField()
+    mod_heading=models.CharField(max_length=100)
+    mod_description=models.CharField(max_length=600)
 
 class Batch(models.Model):
     name=models.CharField(max_length=200)

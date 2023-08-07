@@ -39,10 +39,10 @@ schema_view = get_schema_view(
 from rest_framework.authtoken.views import ObtainAuthToken
 router=DefaultRouter()
 router.register("api/register",api_view.UsersView,basename="users"),
-router.register("api/courses",api_view.CoursesListView,basename="courses"),
+# router.register("api/courses",api_view.CoursesListView,basename="courses"),
 router.register("api/democlass",api_view.DemoClassListView,basename="democlass"),
 router.register("api/details",api_view.DetailsListAPIView,basename="details"),
-router.register("api/modules",api_view.ModulesAPIView,basename="modules"),
+# router.register("api/modules",api_view.ModulesAPIView,basename="modules"),
 router.register("api/batches",api_view.BatchListView,basename="batches"),
 router.register("api/overview",api_view.OverDetailView,basename="overview"),
 router.register("api/attendance",api_view.AttendanceView,basename="attendance"),
@@ -55,6 +55,7 @@ router.register("api/jobportal",api_view.JobPortalView,basename="jobportal"),
 router.register("api/userprofile",api_view.UserProfileView,basename="userprofile"),
 router.register("api/videoscreenclass",api_view.VideoScreenClassViewSet,basename="videoscreenclass"),
 router.register("api/logo",api_view.LogoViewSet,basename="logo"),
+router.register("api/module",api_view.ModuleView,basename="module"),
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/token/",ObtainAuthToken.as_view()),
