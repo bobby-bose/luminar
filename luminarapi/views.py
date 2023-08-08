@@ -121,14 +121,12 @@ class DetailsListAPIView(GenericViewSet,ListModelMixin,RetrieveModelMixin,Create
             total_results = details.count()
 
             if total_results == 0:
-               
                 response_data = {
                     "status": "ok",
-                    "message": "[]",
+                    "message": [],
                     "totalResults": total_results
                 }
             else:
-               
                 serialized_details = self.serializer_class(details, many=True)
                 response_data = {
                     "status": "ok",
@@ -136,14 +134,14 @@ class DetailsListAPIView(GenericViewSet,ListModelMixin,RetrieveModelMixin,Create
                     "totalResults": total_results
                 }
         except Exception as e:
-            
             response_data = {
                 "status": "error",
                 "error_message": str(e),
-                "totalResults": total_results
+                "totalResults": 0  # Reset totalResults on error
             }
-        
+
         return Response(response_data)
+
     def create(self, request, *args, **kwargs):
         try:
             serializer = self.get_serializer(data=request.data)
@@ -154,13 +152,13 @@ class DetailsListAPIView(GenericViewSet,ListModelMixin,RetrieveModelMixin,Create
                 "status": "ok",
                 "data": serializer.data
             }
-            return Response(response_data)
+            return Response(response_data, status=201)
         except Exception as e:
             response_data = {
                 "status": "error",
                 "error_message": str(e)
             }
-            return Response(response_data)
+            return Response(response_data, status=400)
 
     def update(self, request, *args, **kwargs):
         try:
@@ -180,6 +178,21 @@ class DetailsListAPIView(GenericViewSet,ListModelMixin,RetrieveModelMixin,Create
                 "error_message": str(e)
             }
             return Response(response_data)
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            response_data = {
+                "status": "ok",
+                "data": serializer.data
+            }
+        except Exception as e:
+            response_data = {
+                "status": "error",
+                "error_message": str(e)
+            }
+
+        return Response(response_data)
     
 
     
@@ -1015,12 +1028,78 @@ class ModuleView(GenericViewSet,CreateModelMixin,RetrieveModelMixin,UpdateModelM
     serializer_class = ModuleSerializer
     http_method_names=['get','post','put']
     def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        serializer = ModuleSerializer (queryset, many=True)
-        
-        response_data = {
-            "status": "ok",
-            "data": serializer.data
-        }
+        try:
+            user_profiles = self.get_queryset()
+            total_results = user_profiles.count()
+
+            if total_results == 0:
+                response_data = {
+                    "status": "ok",
+                    "message": "[]",
+                    "totalResults": total_results
+                }
+            else:
+                serialized_user_profiles = self.serializer_class(user_profiles, many=True)
+                response_data = {
+                    "status": "ok",
+                    "data": serialized_user_profiles.data,
+                    "totalResults": total_results
+                }
+        except Exception as e:
+            response_data = {
+                "status": "error",
+                "error_message": str(e),
+                "totalResults": total_results
+            }
+
+        return Response(response_data)
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+
+            response_data = {
+                "status": "ok",
+                "data": serializer.data
+            }
+        except Exception as e:
+            response_data = {
+                "status": "error",
+                "error_message": str(e)
+            }
+
+        return Response(response_data)
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            response_data = {
+                "status": "ok",
+                "data": serializer.data
+            }
+        except Exception as e:
+            response_data = {
+                "status": "error",
+                "error_message": str(e)
+            }
+
+        return Response(response_data)
+    def update(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+
+            response_data = {
+                "status": "ok",
+                "data": serializer.data
+            }
+        except Exception as e:
+            response_data = {
+                "status": "error",
+                "error_message": str(e)
+            }
 
         return Response(response_data)
